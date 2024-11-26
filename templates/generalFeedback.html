@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Feedback</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1340.0.min.js"></script> 
+    <script src="../script.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>General Feedback</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="productFeedback.html">Product Feedback</a>
+        </nav>
+    </header>
+    
+    <main>
+        <h2>Submit Your General Feedback</h2>
+        <form id="generalFeedbackForm">
+            <label for="generalName">Name:</label>
+            <input type="text" id="generalName" name="generalName" required>
+            
+            <label for="generalComments">Comments:</label>
+            <textarea id="generalComments" name="comments" required></textarea>
+            
+            <label for="generalImage">Upload Image:</label>
+            <input type="file" id="generalImage" name="image" accept="image/*">
+            
+            <input type="submit" value="Submit Feedback">
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Your Company Name. All rights reserved.</p>
+    </footer>
+</body>
+</html>

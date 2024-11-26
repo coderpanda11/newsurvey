@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Feedback Form</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1340.0.min.js"></script> 
+    <script src="../script.js" defer></script> 
+</head>
+<body>
+    <header>
+        <h1>Product Feedback Form</h1>
+        <nav>
+            <a href="../index.html">Home</a>
+        </nav>
+    </header>
+    
+    <main>
+        <form id="productFeedbackForm" aria-label="Product Feedback Form">
+            <label for="productName">Product Name:</label>
+            <input type="text" id="productName" name="productName" required>
+            
+            <label for="rating">Rating:</label>
+            <select id="rating" name="rating" required>
+                <option value="1">1 - Poor</option>
+                <option value="2">2 - Fair</option>
+                <option value="3">3 - Good</option>
+                <option value="4">4 - Very Good</option>
+                <option value="5">5 - Excellent</option>
+            </select>
+            
+            <label for="productFeedback">Feedback:</label>
+            <textarea id="productFeedback" name="feedback" required></textarea>
+            
+            <label for="productImage">Upload Image:</label>
+            <input type="file" id="productImage" name="image" accept="image/*">
+            
+            <input type="submit" value="Submit Feedback">
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Your Company Name. All rights reserved.</p>
+    </footer>
+</body>
+</html>
