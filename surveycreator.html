@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Maker</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script> <!-- Link to the external JavaScript file -->
+</head>
+<body>
+    <header>
+        <h1>Create Your Survey</h1>
+        <nav>
+            <a href="dashboardCreator.html">Dashboard</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="logout.html">Logout</a>
+        </nav>
+    </header>
+    
+    <main>
+        <form id="surveyForm">
+            <label for="surveyTitle">Survey Title:</label>
+            <input type="text" id="surveyTitle" name="surveyTitle" >
+            
+            <label for="question">Question:</label>
+            <input type="text" id="question" name="question" >
+            
+            <label for="questionType">Question Type:</label>
+            <select id="questionType" name="questionType">
+                <option value="text">Text</option>
+                <option value="multipleChoice">Multiple Choice</option>
+                <option value="rating">Rating</option>
+            </select>
+            
+            <div id="optionsContainer" style="display: none;">
+                <label for="options">Options (comma-separated):</label>
+                <input type="text" id="options" name="options" placeholder="Option 1, Option 2, Option 3">
+            </div>
+
+            <button type="button" id="addQuestionBtn">Add Question</button>
+            <button type="submit">Create Survey</button>
+        </form>
+
+        <h2>Survey Preview</h2>
+        <div id="surveyPreview"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Your Company Name. All rights reserved.</p>
+    </footer>
+</body>
+</html>

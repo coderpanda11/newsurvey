@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Survey</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Your Survey</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+    </header>
+    
+    <main>
+        <div id="surveyContent"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Your Company Name. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Load the survey data from local storage
+        const surveyData = JSON.parse(localStorage.getItem('createdSurvey'));
+        const surveyContent = document.getElementById('surveyContent');
+
+        if (surveyData) {
+            surveyData.forEach(question => {
+                const questionElement = document.createElement('div');
+                questionElement.innerHTML = `<strong>${question.question}</strong> (${question.type})`;
+                surveyContent.appendChild(questionElement);
+            });
+ } else {
+            surveyContent.innerHTML = '<p>No survey data found.</p>';
+        }
+    </script>
+</body>
+</html>

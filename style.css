@@ -1,7 +1,9 @@
-/* style.css */
-
 /* Reset some default styles */
 body, h1, h2, form {
+    font-family: Arial, sans-serif;
+    background-color: #5cb85c;
+    color: #333;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
 }
@@ -18,6 +20,11 @@ header {
     color: white;
     padding: 10px 0;
     text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
 }
 
 nav a {
@@ -85,8 +92,87 @@ input[type="submit"]:hover {
     background-color: #4cae4c;
 }
 
+/* Table container */
+.container {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 1200px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center; /* Center align all text */
+    table-layout: fixed; /* Fix table layout for better alignment */
+}
+
+thead {
+    background-color: #5cb85c;
+    color: white;
+}
+
+thead th {
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid #ddd;
+}
+
+tbody td, thead th {
+    padding: 12px; /* Uniform padding */
+    border: 1px solid #ddd;
+    vertical-align: middle; /* Align content vertically */
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #fff;
+}
+
+tbody td:first-child {
+    font-weight: bold;
+}
+
+tbody td {
+    word-wrap: break-word; /* Ensure text wraps within cells */
+    white-space: normal; /* Prevent text overflow */
+}
+
+/* Adjust responsiveness for smaller screens */
 @media (max-width: 600px) {
-    form {
-        padding: 15px;
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+    }
+
+    thead {
+        display: none; /* Hide table header on small screens */
+    }
+
+    tbody tr {
+        margin-bottom: 15px;
+        display: block;
+        border-bottom: 2px solid #ddd;
+    }
+
+    tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+    tbody td::before {
+        content: attr(data-label); /* Add labels to each cell */
+        font-weight: bold;
+        margin-right: 10px;
+        text-align: left;
     }
 }

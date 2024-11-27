@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Survey</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Your Survey</h1>
+        <nav>
+            <a href="dashboardCreator.html">Dashboard</a>
+            <a href="logout.html">Logout</a>
+        </nav>
+    </header>
+    
+    <main>
+        <div id="surveyContent"></div>
+        <button id="submitSurveyBtn">Submit Survey</button>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Your Company Name. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Load the survey data from local storage
+        const surveyData = JSON.parse(localStorage.getItem('createdSurvey'));
+        const surveyContent = document.getElementById('surveyContent');
+    
+        if (surveyData) {
+            surveyData.forEach((question, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.innerHTML = `<strong>${question.question}</strong>`;
+                
+                if (question.type === 'multipleChoice') {
+                    const optionsList = document.createElement('ul');
+                    question.options.forEach(option => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<input type="radio" name="question${ index}" value="${option}"> ${option}`;
+                        optionsList.appendChild(li);
+                    });
+                    questionElement.appendChild(optionsList);
+                } else {
+                    questionElement.innerHTML += `<input type="text" name="question${index}" placeholder="Your answer here">`;
+                }
+    
+                surveyContent.appendChild(questionElement);
+            });
+        } else {
+            surveyContent.innerHTML = '<p>No survey data found.</p>';
+        }
+    
+        // Handle survey submission
+        document.getElementById('submitSurveyBtn').addEventListener('click', () => {
+            const responses = [];
+            surveyData.forEach((question, index) => {
+                const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
+                               document.querySelector(`input[name="question${index}"]`);
+                responses.push({
+                    question: question.question,
+                    answer: answer ? answer.value : 'No answer provided'
+                });
+            });
+            console.log('Survey Responses:', responses);
+            alert('Thank you for submitting the survey!');
+            // Optionally, you can send the responses to a server here
+        });
+    </script>
+</body>
+</html>

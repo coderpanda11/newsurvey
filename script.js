@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (user) {
                 alert('Login successful!');
-                window.location.href = 'dashboard.html'; // Redirect to feedback form
+                window.location.href = 'userChoice.html'; // Redirect to feedback form
             } else {
                 alert('Invalid username or password.');
             }
@@ -63,38 +63,101 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Handle reset password form submission
-const resetPasswordForm = document.getElementById('resetPasswordForm');
-if (resetPasswordForm) {
-    resetPasswordForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Prevent the default form submission
-    
-        const resetEmail = document.getElementById('resetEmail').value;
-    
-        try {
-            const response = await fetch('http://localhost:3000/send-reset-email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: resetEmail })
-            });
-    
-            if (!response.ok) {
-                // Handle response errors
-                const errorText = await response.text();
-                throw new Error(`Error sending email: ${errorText}`);
+    const resetPasswordForm = document.getElementById('resetPasswordForm');
+    if (resetPasswordForm) {
+        resetPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+        
+            const resetEmail = document.getElementById('resetEmail').value;
+        
+            try {
+                const response = await fetch('http://localhost:3000/send-reset-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: resetEmail })
+                });
+        
+                if (!response.ok) {
+                    // Handle response errors
+                    const errorText = await response.text();
+                    throw new Error(`Error sending email: ${errorText}`);
+                }
+        
+                alert('A reset password link has been sent to your email address.');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error sending the email: ' + error.message);
             }
+        
+            // Optionally hide the reset password form after submission
+            forgotPasswordForm.style.display = 'none';
+        });
+    }
+
+    // Survey Creation Functionality
+    const surveyForm = document.getElementById('surveyForm');
+    if (surveyForm) {
+        const surveyPreview = document.getElementById('surveyPreview');
+        const addQuestionBtn = document.getElementById('addQuestionBtn');
+        const optionsContainer = document.getElementById('optionsContainer');
+
+        // Show options input if Multiple Choice is selected
+        const questionTypeSelect = document.getElementById('questionType');
+        questionTypeSelect.addEventListener('change', () => {
+            optionsContainer.style.display = questionTypeSelect.value === 'multipleChoice' ? 'block' : 'none';
+        });
+
+        // Array to hold all questions
+        const questionsArray = [];
+
+        // Add question to the survey preview
+        addQuestionBtn.addEventListener('click', () => {
+            const question = document.getElementById('question').value.trim();
+            const questionType = questionTypeSelect.value;
+            const options = document.getElementById('options').value.split(',').map(option => option.trim());
+
+            // Check if the question is not empty
+            if (!question) {
+                alert('Please enter a question.');
+                return;
+            }
+
+            // Add question to questions array
+            questionsArray.push({ question, type: questionType, options });
+
+            // Create a question element and display it in the preview
+            const questionElement = document.createElement('div');
+            questionElement.innerHTML = `<strong>${question}</strong> (${questionType})`;
+            
+            if (questionType === 'multipleChoice') {
+                const optionsList = document.createElement('ul');
+                options.forEach(option => {
+                    const li = document.createElement('li');
+                    li.textContent = option;
+                    optionsList.appendChild(li);
+                });
+                questionElement.appendChild(optionsList);
+            }
+
+            surveyPreview.appendChild(questionElement);
+            surveyForm.reset(); // Clear the form fields
+            optionsContainer.style.display = 'none'; // Hide options input again
+        });
+
+        // Handle survey creation
+        surveyForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Store the questions in local storage
+            localStorage.setItem('createdSurvey', JSON.stringify(questionsArray));
+            
+            // Redirect to the survey display page
+            window.location.href = 'surveyDisplay.html'; // Change to your actual survey display page URL
+        });
+    }
     
-            alert('A reset password link has been sent to your email address.');
-        } catch (error) {
-            console.error('Error:', error);
-            alert('There was an error sending the email: ' + error.message);
-        }
-    
-        // Optionally hide the reset password form after submission
-        forgotPasswordForm.style.display = 'none';
-    });
-}
 
     // Configure AWS SDK
     AWS.config.update({
