@@ -209,16 +209,16 @@ document.addEventListener("DOMContentLoaded", () => {
     
         const params = {
             Bucket: 'pandabucket1337',
-            Key: `surveys/${surveyKey}.json` // Ensure this is set correctly
+            Key: `surveys/${surveyKey}.json` 
         };
     
         try {
             const data = await s3.getObject(params).promise();
-            const surveyData = JSON.parse(data.Body.toString('utf-8'));
-            displaySurvey(surveyData);
+            surveyData = JSON.parse(data.Body.toString('utf-8'));
+            displaySurvey(surveyData); 
         } catch (error) {
             console.error('Error fetching survey:', error);
-            alert('error');
+            alert('Error loading survey data.');
         }
     }
 
@@ -259,40 +259,40 @@ document.addEventListener("DOMContentLoaded", () => {
     
     loadSurvey();
 
-    // Response Submmission
+    // Response Submission
     document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
         const responses = [];
         surveyData.questions.forEach((question, index) => {
             const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
-                           document.querySelector(`input[name="question${index}"]`) || 
-                           document.querySelector(`select[name="question${index}"]`);
+                        document.querySelector(`input[name="question${index}"]`) || 
+                        document.querySelector(`select[name="question${index}"]`);
             responses.push({
                 question: question.question,
                 answer: answer ? answer.value : 'No answer provided'
             });
         });
-    
+        
         // Check if there are any responses
         if (responses.length === 0) {
             alert('No responses to submit.');
             return; // Exit if no responses
         }
-    
+        
         // Convert responses to CSV format
         const csvData = responses.map(r => `${r.question},"${r.answer}"`).join('\n');
         const blob = new Blob([csvData], { type: 'text/csv' });
         const csvFile = new File([blob], 'responses.csv', { type: 'text/csv' });
-    
+        
         // Generate a unique random number for the file name
         const randomNum = Date.now(); // Using current timestamp as a unique identifier
-    
+        
         const params = {
             Bucket: 'pandabucket1337', // Replace with your bucket name
             Key: `responses/${randomNum}.csv`, // Unique file name
             Body: csvFile,
             ContentType: 'text/csv'
         };
-    
+        
         try {
             await s3.putObject(params).promise();
             alert('Responses submitted successfully!');
