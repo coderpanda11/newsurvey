@@ -255,12 +255,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             surveyContent.appendChild(questionElement);
         });
-
-        // Add a submit button
-        const submitButton = document.createElement('button');
-        submitButton.textContent = 'Submit Survey';
-        submitButton.id = 'submitSurveyBtn';
-        surveyContent.appendChild(submitButton);
     }
     
     loadSurvey();
