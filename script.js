@@ -196,6 +196,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const surveyKey = urlParams.get('id');
     const surveyContent = document.getElementById('surveyContent');
 
+    let surveyData;
+
     async function loadSurvey() {
         const urlParams = new URLSearchParams(window.location.search);
         const surveyKey = urlParams.get('id'); // Get the survey key from the URL
