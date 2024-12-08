@@ -188,48 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const s3 = new AWS.S3();
 
-    // Function to upload survey questions to S3
-    // async function uploadSurveyToS3(surveyTitle, questions) {
-    
-    //     const params = {
-    //         Bucket: 'pandabucket1337', // Replace with your bucket name
-    //         Key: `surveys/${surveyTitle}.json`, // Unique key for the survey
-    //         Body: JSON.stringify(questions),
-    //         ContentType: 'application/json'
-    //     };
-    
-    //     try {
-    //         await s3.putObject(params).promise();
-    //         console.log('Survey uploaded successfully:', params.Key);
-    //         return `https://pandabucket1337.s3.eu-north-1.amazonaws.com/${params.Key}`; // Return the URL
-    //     } catch (error) {
-    //         console.error('Error uploading survey:', error);
-    //         throw error;
-    //     }
-    // }
- 
-   
-
-    // // Function to upload files to S3
-    // async function uploadFiles(files, folder) {
-    //     const uploadPromises = [];
-    //     for (const file of files) {
-    //         const params = {
-    //             Bucket: 'pandabucket1337', // Replace with your bucket name
-    //             Key: `${folder}/${file.name}`, // Unique key for the file
-    //             Body: file,
-    //             ContentType: file.type
-    //         };
-    //         try {
-    //             const response = await s3.putObject(params).promise();
-    //             console.log('Upload response:', response);
-    //         } catch (error) {
-    //             console.error('Error uploading file:', error);
-    //             throw error; // Re-throw to handle in the calling function
-    //         }
-    //     }
-    // }
-
     async function uploadFiles(files, folder) {
         const uploadPromises = files.map(file => {
             const params = {
