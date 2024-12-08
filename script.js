@@ -202,8 +202,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         const surveyKey = urlParams.get('id'); // Get the survey key from the URL
     
-        if (!surveyKey) {
-            console.error('No survey key provided in the URL.');
+        if (!surveyKey || !surveyData.questions) {
+            alert('Survey Data no avaliable');
             return; // Exit if no key is found
         }
     
