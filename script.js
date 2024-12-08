@@ -185,39 +185,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const surveyContent = document.getElementById('surveyContent');
 
     async function loadSurvey() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const surveyKey = urlParams.get('id'); // Get the survey key from the URL
+    
+        if (!surveyKey) {
+            console.error('No survey key provided in the URL.');
+            return; // Exit if no key is found
+        }
+    
         const params = {
-            Bucket: 'pandabucket1337', // Replace with your bucket name
-            Key: surveyKey // Use the key from the URL
+            Bucket: 'pandabucket1337',
+            Key: surveyKey // Ensure this is set correctly
         };
-
+    
         try {
             const data = await s3.getObject(params).promise();
             const surveyData = JSON.parse(data.Body.toString('utf-8'));
-            
-            // Display the survey questions
-            surveyData.questions.forEach((question, index) => {
-                const questionElement = document.createElement('div');
-                questionElement.innerHTML = `<strong>${question.question}</strong>`;
-                surveyContent.appendChild(questionElement);
-                
-                if (question.type === 'multipleChoice') {
-                    const optionsList = document.createElement('ul');
-                    question.options.forEach(option => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<input type="radio" name="question${index}" value="${option}"> ${option}`;
-                        optionsList.appendChild(li);
-                    });
-                    questionElement.appendChild(optionsList);
-                } else {
-                    questionElement.innerHTML += `<input type="text" name="question${index}" placeholder="Your answer here ">`;
-                }
-            });
+            // Process the survey data...
         } catch (error) {
             console.error('Error fetching survey:', error);
-            surveyContent.innerHTML = '<p>No survey data found.</p>';
         }
     }
-
+    
     loadSurvey();
 
     document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
