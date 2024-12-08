@@ -146,14 +146,28 @@ document.addEventListener("DOMContentLoaded", () => {
             optionsContainer.style.display = 'none'; // Hide options input again
         });
 
-        // Handle survey creation
+        // Add this function at the beginning of your script.js file or within the DOMContentLoaded event
+        function generateUID() {
+            const timestamp = Date.now(); // Get the current timestamp
+            const randomNum = Math.floor(Math.random() * 10000); // Generate a random number
+            return `form-${timestamp}-${randomNum}`; // Create a unique UID
+        }
+
+        // Inside the survey form submission handler
         surveyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-    
+
             const surveyTitle = document.getElementById('surveyTitle').value;
             // Store the questions in local storage
             localStorage.setItem('createdSurvey', JSON.stringify(questionsArray));
-    
+
+            // Generate a unique ID for the form
+            const uid = generateUID();
+            const shareableLink = `https://coderpanda11.github.io/newsurvey/surveyDisplay.html?id=${uid}`;
+            
+            // Optionally, display the shareable link to the user
+            alert(`Your survey has been created! Share this link: ${shareableLink}`);
+
             try {
                 const surveyUrl = await uploadSurveyToS3(surveyTitle, questionsArray);
                 alert(`Survey created successfully! Share this link: ${surveyUrl}`);
@@ -175,24 +189,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const s3 = new AWS.S3();
 
     // Function to upload survey questions to S3
-    async function uploadSurveyToS3(surveyTitle, questions) {
+    // async function uploadSurveyToS3(surveyTitle, questions) {
     
-        const params = {
-            Bucket: 'pandabucket1337', // Replace with your bucket name
-            Key: `surveys/${surveyTitle}.json`, // Unique key for the survey
-            Body: JSON.stringify(questions),
-            ContentType: 'application/json'
-        };
+    //     const params = {
+    //         Bucket: 'pandabucket1337', // Replace with your bucket name
+    //         Key: `surveys/${surveyTitle}.json`, // Unique key for the survey
+    //         Body: JSON.stringify(questions),
+    //         ContentType: 'application/json'
+    //     };
     
-        try {
-            await s3.putObject(params).promise();
-            console.log('Survey uploaded successfully:', params.Key);
-            return `https://pandabucket1337.s3.eu-north-1.amazonaws.com/${params.Key}`; // Return the URL
-        } catch (error) {
-            console.error('Error uploading survey:', error);
-            throw error;
-        }
-    }
+    //     try {
+    //         await s3.putObject(params).promise();
+    //         console.log('Survey uploaded successfully:', params.Key);
+    //         return `https://pandabucket1337.s3.eu-north-1.amazonaws.com/${params.Key}`; // Return the URL
+    //     } catch (error) {
+    //         console.error('Error uploading survey:', error);
+    //         throw error;
+    //     }
+    // }
  
    
 
