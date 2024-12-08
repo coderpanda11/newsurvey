@@ -167,14 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // Optionally, display the shareable link to the user
             alert(`Your survey has been created! Share this link: ${shareableLink}`);
-
-            try {
-                const surveyUrl = await uploadSurveyToS3(surveyTitle, questionsArray);
-                alert(`Survey created successfully! Share this link: ${surveyUrl}`);
-                window.location.href = 'surveyDisplay.html'; // Redirect to the survey display page
-            } catch (error) {
-                alert('There was an error creating the survey.');
-            }
+            window.location.href = 'surveyDisplay.html';
         });
     }
     
