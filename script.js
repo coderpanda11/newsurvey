@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
 
             const surveyTitle = document.getElementById('surveyTitle').value;
-            // Store the questions in local storage
+            
             localStorage.setItem('createdSurvey', JSON.stringify(questionsArray));
 
             // Generate a unique ID for the form
