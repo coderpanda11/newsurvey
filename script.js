@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Create a question element and display it in the preview
             const questionElement = document.createElement('div');
-            questionElement.innerHTML = `<strong>${question}</strong> (${questionType})`;
+            questionElement.innerHTML = `<strong>${question}</strong>`;
             
             if (questionType === 'multipleChoice') {
                 const optionsList = document.createElement('ul');
