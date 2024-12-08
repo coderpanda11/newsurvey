@@ -199,7 +199,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Response Submmission
+    document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
+        const responses = [];
+        surveyData.questions.forEach((question, index) => {
+            const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
+                           document.querySelector(`input[name="question${index}"]`);
+            responses.push({
+                question: question.question,
+                answer: answer ? answer.value : 'No answer provided'
+            });
+        });
     
+        // Convert responses to CSV format
+        const csvData = responses.map(r => `${r.question},"${r.answer}"`).join('\n');
+        const blob = new Blob([csvData], { type: 'text/csv' });
+        const csvFile = new File([blob], 'responses.csv', { type: 'text/csv' });
+    
+        const params = {
+            Bucket: 'pandabucket1337', // Replace with your bucket name
+            Key: `responses/${randomNum}.csv`, // Unique file name
+            Body: csvFile,
+            ContentType: 'text/csv'
+        };
+    
+        try {
+            await s3.putObject(params).promise();
+            alert('Responses submitted successfully!');
+        } catch (error) {
+            console.error('Error uploading responses:', error);
+            alert('There was an error submitting your responses.');
+        }
+    });
 
     // Feedback Form Submission
     const feedbackForm = document.getElementById('feedbackForm');
