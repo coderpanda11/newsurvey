@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Add this function at the beginning of your script.js file or within the DOMContentLoaded event
         function generateUID() {
             const randomNum = Math.floor(Math.random() * 10000); // Generate a random number
-            return `form-${randomNum}`; // Create a unique UID
+            return `${randomNum}`; // Create a unique UID
         }
 
         // Inside the survey form submission handler
@@ -182,8 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const urlParams = new URLSearchParams(window.location.search);
     const surveyKey = urlParams.get('id');
-
-    const key = `form-${randomNum}`;
     const surveyContent = document.getElementById('surveyContent');
 
     async function loadSurvey() {
@@ -197,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
         const params = {
             Bucket: 'pandabucket1337',
-            Key: key // Ensure this is set correctly
+            Key: surveyKey // Ensure this is set correctly
         };
     
         try {
