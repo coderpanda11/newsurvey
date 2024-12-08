@@ -182,6 +182,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const urlParams = new URLSearchParams(window.location.search);
     const surveyKey = urlParams.get('id');
+
+    const key = `form-${randomNum}`;
     const surveyContent = document.getElementById('surveyContent');
 
     async function loadSurvey() {
@@ -195,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
         const params = {
             Bucket: 'pandabucket1337',
-            Key: surveyKey // Ensure this is set correctly
+            Key: key // Ensure this is set correctly
         };
     
         try {
