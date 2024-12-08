@@ -207,16 +207,40 @@ document.addEventListener("DOMContentLoaded", () => {
     
         const params = {
             Bucket: 'pandabucket1337',
-            Key: surveyKey // Ensure this is set correctly
+            Key: `surveys/${surveyKey}.json` // Ensure this is set correctly
         };
     
         try {
             const data = await s3.getObject(params).promise();
             const surveyData = JSON.parse(data.Body.toString('utf-8'));
-            // Process the survey data...
+            displaySurvey(surveyData);
         } catch (error) {
             console.error('Error fetching survey:', error);
+            alert('error');
         }
+    }
+
+    function displaySurvey(surveyData) {
+        const surveyContent = document.getElementById('surveyContent');
+        surveyContent.innerHTML = `<h2>${surveyData.title}</h2>`;
+
+
+        surveyData.questions.forEach((question, index) => {
+            const questionElement = document.createElement('div');
+            questionElement.innerHTML = `<strong>${question.question}</strong>`;
+
+            if (question.type === 'multipleChoice') {
+                const optionsList = document.createElement('ul');
+                question.options.forEach(option => {
+                    const li = document.createElement('li');
+                    li.textContent = option;
+                    optionsList.appendChild(li);
+                });
+                questionElement.appendChild(optionsList);
+            }
+
+            surveyContent.appendChild(questionElement);
+        });
     }
     
     loadSurvey();
