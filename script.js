@@ -157,16 +157,28 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
 
             const surveyTitle = document.getElementById('surveyTitle').value;
-            
-            localStorage.setItem('createdSurvey', JSON.stringify(questionsArray));
-
+            const surveyData ={
+                title: surveyTitle,
+                questions: questionsArray
+            };
             // Generate a unique ID for the form
             const uid = generateUID();
-            const shareableLink = `https://coderpanda11.github.io/newsurvey/surveyDisplay.html?id=${uid}`;
-            
-            // Optionally, display the shareable link to the user
-            alert(`Your survey has been created! Share this link: ${shareableLink}`);
-            window.location.href = 'surveyDisplay.html';
+            const params ={
+                Bucket: 'pandabucket1337',
+                Key: `surveys/${uid}.json`,
+                Body: JSON.stringify(surveyData),
+                ContentType: 'application/json'
+            };
+
+            try {
+                await s3.putObject(params).promise();
+                const shareableLink = `https://coderpanda11.github.io/newsurvey/surveyDisplay.html?id=${uid}`;
+                alert(`Your survey has been created and can be accessed at: ${shareableLink}`);
+                window.location.href = shareableLink;
+            } catch (error) {
+                console.log('Error uploading survey:', error)
+                alert("Error")
+            }
         });
     }
     
@@ -208,59 +220,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     loadSurvey();
-
-    document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
-        const responses = [];
-        const surveyData = JSON.parse(localStorage.getItem('createdSurvey')); // Retrieve survey data from local storage
-
-        surveyData.questions.forEach((question, index) => {
-            const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
-                           document.querySelector(`input[name="question${index}"]`);
-            responses.push({
-                question: question.question,
-                answer: answer ? answer.value : 'No answer provided'
-            });
-        });
-
-        // Convert responses to CSV format
-        const csvData = responses.map(r => `${r.question},"${r.answer}"`).join('\n');
-        const blob = new Blob([csvData], { type: 'text/csv' });
-        const csvFile = new File([blob], 'responses.csv', { type: 'text/csv' });
-
-        const params = {
-            Bucket: 'pandabucket1337', // Replace with your bucket name
-            Key: `responses/${randomNum}.csv`, // Unique file name
-            Body: csvFile,
-            ContentType: 'text/csv'
-        };
-
-        try {
-            await s3.putObject(params).promise();
-            alert('Responses submitted successfully!');
-        } catch (error) {
-            console.error('Error uploading responses:', error);
-            alert('There was an error submitting your responses.');
-        }
-    });
-
-    async function uploadFiles(files, folder) {
-        const uploadPromises = files.map(file => {
-            const params = {
-                Bucket: 'pandabucket1337',
-                Key: `${folder}/${file.name}`,
-                Body: file,
-                ContentType: file.type
-            };
-            return s3.putObject(params).promise();
-        });
-        try {
-            await Promise.all(uploadPromises);
-            console.log('All files uploaded successfully.');
-        } catch (error) {
-            console.error('Error uploading files:', error);
-            throw error;
-        }
-    }
 
     // Response Submmission
     document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
