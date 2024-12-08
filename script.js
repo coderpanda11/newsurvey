@@ -148,9 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Add this function at the beginning of your script.js file or within the DOMContentLoaded event
         function generateUID() {
-            const timestamp = Date.now(); // Get the current timestamp
             const randomNum = Math.floor(Math.random() * 10000); // Generate a random number
-            return `form-${timestamp}-${randomNum}`; // Create a unique UID
+            return `form-${randomNum}`; // Create a unique UID
         }
 
         // Inside the survey form submission handler
