@@ -147,14 +147,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Handle survey creation
-        surveyForm.addEventListener('submit', (e) => {
+        surveyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
+    
+            const surveyTitle = document.getElementById('surveyTitle').value;
             // Store the questions in local storage
             localStorage.setItem('createdSurvey', JSON.stringify(questionsArray));
-            
-            // Redirect to the survey display page
-            window.location.href = 'surveyDisplay.html'; // Change to your actual survey display page URL
+    
+            try {
+                const surveyUrl = await uploadSurveyToS3(surveyTitle, questionsArray);
+                alert(`Survey created successfully! Share this link: ${surveyUrl}`);
+                window.location.href = 'surveyDisplay.html'; // Redirect to the survey display page
+            } catch (error) {
+                alert('There was an error creating the survey.');
+            }
         });
     }
     
@@ -168,23 +174,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const s3 = new AWS.S3();
 
-    // Function to upload files to S3
+    // Function to upload survey questions to S3
+    async function uploadSurveyToS3(surveyTitle, questions) {
+    
+        const params = {
+            Bucket: 'pandabucket1337', // Replace with your bucket name
+            Key: `surveys/${surveyTitle}.json`, // Unique key for the survey
+            Body: JSON.stringify(questions),
+            ContentType: 'application/json'
+        };
+    
+        try {
+            await s3.putObject(params).promise();
+            console.log('Survey uploaded successfully:', params.Key);
+            return `https://pandabucket1337.s3.eu-north-1.amazonaws.com/${params.Key}`; // Return the URL
+        } catch (error) {
+            console.error('Error uploading survey:', error);
+            throw error;
+        }
+    }
+ 
+   
+
+    // // Function to upload files to S3
+    // async function uploadFiles(files, folder) {
+    //     const uploadPromises = [];
+    //     for (const file of files) {
+    //         const params = {
+    //             Bucket: 'pandabucket1337', // Replace with your bucket name
+    //             Key: `${folder}/${file.name}`, // Unique key for the file
+    //             Body: file,
+    //             ContentType: file.type
+    //         };
+    //         try {
+    //             const response = await s3.putObject(params).promise();
+    //             console.log('Upload response:', response);
+    //         } catch (error) {
+    //             console.error('Error uploading file:', error);
+    //             throw error; // Re-throw to handle in the calling function
+    //         }
+    //     }
+    // }
+
     async function uploadFiles(files, folder) {
-        const uploadPromises = [];
-        for (const file of files) {
+        const uploadPromises = files.map(file => {
             const params = {
-                Bucket: 'pandabucket1337', // Replace with your bucket name
-                Key: `${folder}/${Date.now()}-${file.name}`, // Unique key for the file
+                Bucket: 'pandabucket1337',
+                Key: `${folder}/${file.name}`,
                 Body: file,
                 ContentType: file.type
             };
-            try {
-                const response = await s3.putObject(params).promise();
-                console.log('Upload response:', response);
-            } catch (error) {
-                console.error('Error uploading file:', error);
-                throw error; // Re-throw to handle in the calling function
-            }
+            return s3.putObject(params).promise();
+        });
+        try {
+            await Promise.all(uploadPromises);
+            console.log('All files uploaded successfully.');
+        } catch (error) {
+            console.error('Error uploading files:', error);
+            throw error;
         }
     }
 
@@ -196,19 +243,25 @@ document.addEventListener("DOMContentLoaded", () => {
         feedbackForm.addEventListener('submit', async (e) => {
             e.preventDefault(); // Prevent the default form submission
 
+            // Collect data
             const data = {
-                name : document.getElementById('name').value,
+                name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
                 age: document.getElementById('age').value,
                 comments: document.getElementById('comments').value,
             };
 
-            console.log('Feedback Form Data:', data);
-            
+            // Convert data to CSV format
+            const csvData = `Name,Email,Age,Comments\n${data.name},${data.email},${data.age},"${data.comments}"\n`;
+
+            // Create a Blob from the CSV data
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const csvFile = new File([blob], 'feedback.csv', { type: 'text/csv' });
+
             // Prepare to upload files
             const imageFile = document.getElementById('image').files[0];
             const videoFile = document.getElementById('video').files[0];
-            const filesToUpload = [];
+            const filesToUpload = [csvFile]; // Add CSV file to the upload list
 
             if (imageFile) filesToUpload.push(imageFile);
             if (videoFile) filesToUpload.push(videoFile);
@@ -222,6 +275,31 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // Append data
+    async function appendDataToCSV(newData) {
+        const params = {
+            Bucket: 'pandabucket1337', // Replace with your bucket name
+            Key: 'feedback/feedback.csv' // Path to your existing CSV file
+        };
+    
+        try {
+            const data = await s3.getObject(params).promise();
+            const existingCSV = data.Body.toString('utf-8');
+            const updatedCSV = existingCSV + newData; // Append new data
+    
+            // Upload the updated CSV back to S3
+            await s3.putObject({
+                Bucket: params.Bucket,
+                Key: params.Key,
+                Body: updatedCSV,
+                ContentType: 'text/csv'
+            }).promise();
+        } catch (error) {
+            console.error('Error appending data to CSV:', error);
+        }
+    }
+    
     
     // General Feedback Form Submission
     const generalFeedbackForm = document.getElementById('generalFeedbackForm');
@@ -230,22 +308,50 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault(); // Prevent the default form submission
 
             // Collect data
-            const data = {
-                name: document.getElementById('generalName').value,
-                comments: document.getElementById('generalComments').value,
+            const generalName = document.getElementById('generalName').value;
+            const generalComments = document.getElementById('generalComments').value;
+            const generalImageFile = document.getElementById('generalImage').files[0];
+
+            // Generate a unique filename for the image
+            const imageTimestamp = Date.now();
+            const imageFilename = `${imageTimestamp}-${generalImageFile.name}`;
+
+            // Prepare to upload the image file
+            const imageUploadParams = {
+                Bucket: 'pandabucket1337', // Replace with your bucket name
+                Key: `generalFeedback/${imageFilename}`, // Path in the bucket
+                Body: generalImageFile,
+                ContentType: generalImageFile.type
             };
 
-            console.log('General Feedback Form Data:', data);
-            
-            // Prepare to upload files
-            const generalImageFile = document.getElementById('generalImage').files[0];
-            const filesToUpload = [];
-            if (generalImageFile) filesToUpload.push(generalImageFile);
-            
-            // Log the files being uploaded
-            console.log('Files to upload for General Feedback:', filesToUpload);
-
             try {
+                // Upload the image file to S3
+                await s3.putObject(imageUploadParams).promise();
+                console.log('Image uploaded successfully');
+
+                // Construct the image URL
+                const imageUrl = `https://pandabucket1337.s3.eu-north-1.amazonaws.com/generalFeedback/${imageFilename}`;
+
+                // Create CSV data including the image URL
+                const csvData = `Name,Comments,Image URL\n"${generalName}","${generalComments}","${imageUrl}"\n`;
+
+                // Create a Blob from the CSV data
+                const csvFilename = `general_feedback_${Date.now()}.csv`;
+                const blob = new Blob([csvData], { type: 'text/csv' });
+                const csvFile = new File([blob], csvFilename, { type: 'text/csv' });
+
+                // Prepare to upload the CSV file
+                const filesToUpload = [csvFile]; // Start with the CSV file
+
+                // Log the data being uploaded
+                console.log('Data to upload for General Feedback:', {
+                    name: generalName,
+                    comments: generalComments,
+                    image: generalImageFile ? generalImageFile.name : 'No image uploaded',
+                    imageUrl: imageUrl
+                });
+
+                // Upload the CSV file to S3
                 await uploadFiles(filesToUpload, 'generalFeedback'); // Upload files to S3
                 alert('General feedback submitted successfully!');
             } catch (error) {
@@ -254,6 +360,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    
 
     // Product Feedback Form Submission
     const productFeedbackForm = document.getElementById('productFeedbackForm');
@@ -288,116 +396,116 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Function to fetch data from AWS
-async function fetchData() {
-    const params = {
-        Bucket: 'pandabucket1337',
-        Key: 'feedback/1732428880972.json'
-    };
+    // // Function to fetch data from AWS
+    // async function fetchData() {
+    //     const params = {
+    //         Bucket: 'pandabucket1337',
+    //         Key: 'feedback/1732428880972.json'
+    //     };
 
-    try {
-        const data = await s3.getObject(params).promise();
-        const jsonData = JSON.parse(data.Body.toString('utf-8'));
-        return jsonData; // Return the parsed JSON data
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        return null; // Return null if there is an error
-    }
-}
+    //     try {
+    //         const data = await s3.getObject(params).promise();
+    //         const jsonData = JSON.parse(data.Body.toString('utf-8'));
+    //         return jsonData; // Return the parsed JSON data
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //         return null; // Return null if there is an error
+    //     }
+    // }
 
-// Function to create charts
-async function createCharts() {
-    const data = await fetchData();
+    // // Function to create charts
+    // async function createCharts() {
+    //     const data = await fetchData();
 
-    // Check if data is null or undefined
-    if (!data) {
-        console.error('No data available for chart creation.');
-        return; // Exit the function if no data is available
-    }
+    //     // Check if data is null or undefined
+    //     if (!data) {
+    //         console.error('No data available for chart creation.');
+    //         return; // Exit the function if no data is available
+    //     }
 
-    // Check if data is an array
-    if (!Array.isArray(data)) {
-        console.error('Fetched data is not an array:', data);
-        return; // Exit if data is not an array
-    }
+    //     // Check if data is an array
+    //     if (!Array.isArray(data)) {
+    //         console.error('Fetched data is not an array:', data);
+    //         return; // Exit if data is not an array
+    //     }
 
-    // Data Processing
-    const labels = data.map(item => item.label);
-    const values = data.map(item => item.value);
+    //     // Data Processing
+    //     const labels = data.map(item => item.label);
+    //     const values = data.map(item => item.value);
 
-    // Check if labels and values are not empty
-    if (labels.length === 0 || values.length === 0) {
-        console.error('Labels or values are empty. Cannot create charts.');
-        return; // Exit if there's no data to plot
-    }
+    //     // Check if labels and values are not empty
+    //     if (labels.length === 0 || values.length === 0) {
+    //         console.error('Labels or values are empty. Cannot create charts.');
+    //         return; // Exit if there's no data to plot
+    //     }
 
-    // Bar Chart
-    const barCtx = document.getElementById('barChart').getContext('2d');
-    new Chart(barCtx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Bar Chart Data',
-                data: values,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+    //     // Bar Chart
+    //     const barCtx = document.getElementById('barChart').getContext('2d');
+    //     new Chart(barCtx, {
+    //         type: 'bar',
+    //         data: {
+    //             labels: labels,
+    //             datasets: [{
+    //                 label: 'Bar Chart Data',
+    //                 data: values,
+    //                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
+    //                 borderColor: 'rgba(75, 192, 192, 1)',
+    //                 borderWidth: 1
+    //             }]
+    //         },
+    //         options: {
+    //             scales: {
+    //                 y: {
+    //                     beginAtZero: true
+    //                 }
+    //             }
+    //         }
+    //     });
 
-    // Pie Chart
-    const pieCtx = document.getElementById('pieChart').getContext('2d');
-    new Chart(pieCtx, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Pie Chart Data',
-                data: values,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Pie Chart Data'
-                }
-            }
-        }
-    });
-}
+    //     // Pie Chart
+    //     const pieCtx = document.getElementById('pieChart').getContext('2d');
+    //     new Chart(pieCtx, {
+    //         type: 'pie',
+    //         data: {
+    //             labels: labels,
+    //             datasets: [{
+    //                 label: 'Pie Chart Data',
+    //                 data: values,
+    //                 backgroundColor: [
+    //                     'rgba(255, 99, 132, 0.2)',
+    //                     'rgba(54, 162, 235, 0.2)',
+    //                     'rgba(255, 206, 86, 0.2)',
+    //                     'rgba(75, 192, 192, 0.2)',
+    //                     'rgba(153, 102, 255, 0.2)',
+    //                     'rgba(255, 159, 64, 0.2)'
+    //                 ],
+    //                 borderColor: [
+    //                     'rgba(255, 99, 132, 1)',
+    //                     'rgba(54, 162, 235, 1)',
+    //                     'rgba(255, 206, 86, 1)',
+    //                     'rgba(75, 192, 192, 1)',
+    //                     'rgba(153, 102, 255, 1)',
+    //                     'rgba(255, 159, 64, 1)'
+    //                 ],
+    //                 borderWidth: 1
+    //             }]
+    //         },
+    //         options: {
+    //             responsive: true,
+    //             plugins: {
+    //                 legend: {
+    //                     position: 'top',
+    //                 },
+    //                 title: {
+    //                     display: true,
+    //                     text: 'Pie Chart Data'
+    //                 }
+    //             }
+    //         }
+    //     });
+    // }
 
-// Call the createCharts function to initialize the charts
-createCharts();
+    // // Call the createCharts function to initialize the charts
+    // createCharts();
 
 });

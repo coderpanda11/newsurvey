@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Survey</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1340.0.min.js"></script> 
+    <script src="script.js" defer></script> 
 </head>
 <body>
     <header>
@@ -25,14 +27,18 @@
     </footer>
 
     <script>
-        // Load the survey data from local storage
+        // Load the survey data from local storage using the ID from the URL
         const surveyData = JSON.parse(localStorage.getItem('createdSurvey'));
         const surveyContent = document.getElementById('surveyContent');
+        const urlParams = new URLSearchParams(window.location.search);
+        const SurveyID = urlParams.get('id');
+
     
         if (surveyData) {
             surveyData.forEach((question, index) => {
                 const questionElement = document.createElement('div');
                 questionElement.innerHTML = `<strong>${question.question}</strong>`;
+                surveyContent.appendChild(questionElement);
                 
                 if (question.type === 'multipleChoice') {
                     const optionsList = document.createElement('ul');
@@ -67,6 +73,7 @@
             alert('Thank you for submitting the survey!');
             // Optionally, you can send the responses to a server here
         });
+        
     </script>
 </body>
 </html>
