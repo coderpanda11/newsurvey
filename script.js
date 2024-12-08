@@ -180,6 +180,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const s3 = new AWS.S3();
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const surveyKey = urlParams.get('id');
+    const surveyContent = document.getElementById('surveyContent');
+
+    async function loadSurvey() {
+        const params = {
+            Bucket: 'pandabucket1337', // Replace with your bucket name
+            Key: surveyKey // Use the key from the URL
+        };
+
+        try {
+            const data = await s3.getObject(params).promise();
+            const surveyData = JSON.parse(data.Body.toString('utf-8'));
+            
+            // Display the survey questions
+            surveyData.questions.forEach((question, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.innerHTML = `<strong>${question.question}</strong>`;
+                surveyContent.appendChild(questionElement);
+                
+                if (question.type === 'multipleChoice') {
+                    const optionsList = document.createElement('ul');
+                    question.options.forEach(option => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<input type="radio" name="question${index}" value="${option}"> ${option}`;
+                        optionsList.appendChild(li);
+                    });
+                    questionElement.appendChild(optionsList);
+                } else {
+                    questionElement.innerHTML += `<input type="text" name="question${index}" placeholder="Your answer here ">`;
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching survey:', error);
+            surveyContent.innerHTML = '<p>No survey data found.</p>';
+        }
+    }
+
+    loadSurvey();
+
+    document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
+        const responses = [];
+        const surveyData = JSON.parse(localStorage.getItem('createdSurvey')); // Retrieve survey data from local storage
+
+        surveyData.questions.forEach((question, index) => {
+            const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
+                           document.querySelector(`input[name="question${index}"]`);
+            responses.push({
+                question: question.question,
+                answer: answer ? answer.value : 'No answer provided'
+            });
+        });
+
+        // Convert responses to CSV format
+        const csvData = responses.map(r => `${r.question},"${r.answer}"`).join('\n');
+        const blob = new Blob([csvData], { type: 'text/csv' });
+        const csvFile = new File([blob], 'responses.csv', { type: 'text/csv' });
+
+        const params = {
+            Bucket: 'pandabucket1337', // Replace with your bucket name
+            Key: `responses/${randomNum}.csv`, // Unique file name
+            Body: csvFile,
+            ContentType: 'text/csv'
+        };
+
+        try {
+            await s3.putObject(params).promise();
+            alert('Responses submitted successfully!');
+        } catch (error) {
+            console.error('Error uploading responses:', error);
+            alert('There was an error submitting your responses.');
+        }
+    });
+
     async function uploadFiles(files, folder) {
         const uploadPromises = files.map(file => {
             const params = {
