@@ -221,45 +221,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function displaySurvey(surveyData) {
-    const surveyContent = document.getElementById('surveyContent');
-    surveyContent.innerHTML = `<h2>${surveyData.title}</h2>`; // Display the survey title
+        const surveyContent = document.getElementById('surveyContent');
+        surveyContent.innerHTML = `<h2>${surveyData.title}</h2>`; // Display the survey title
 
-    surveyData.questions.forEach((question, index) => {
-        const questionElement = document.createElement('div');
-        questionElement.innerHTML = `<strong>${question.question}</strong>`;
+        surveyData.questions.forEach((question, index) => {
+            const questionElement = document.createElement('div');
+            questionElement.innerHTML = `<strong>${question.question}</strong>`;
 
-        if (question.type === 'multipleChoice') {
-            question.options.forEach((option, optionIndex) => {
-                const optionElement = document.createElement('div');
-                optionElement.innerHTML = `
-                    <input type="radio" name="question${index}" id="question${index}option${optionIndex}" value="${option}">
-                    <label for="question${index}option${optionIndex}">${option}</label>
+            if (question.type === 'multipleChoice') {
+                question.options.forEach((option, optionIndex) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.innerHTML = `
+                        <input type="radio" name="question${index}" id="question${index}option${optionIndex}" value="${option}">
+                        <label for="question${index}option${optionIndex}">${option}</label>
+                    `;
+                    questionElement.appendChild(optionElement);
+                });
+            } else if (question.type === 'text') {
+                questionElement.innerHTML += `<input type="text" name="question${index}" placeholder="Your answer">`;
+            } else if (question.type === 'rating') {
+                questionElement.innerHTML += `
+                    <select name="question${index}">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
                 `;
-                questionElement.appendChild(optionElement);
-            });
-        } else if (question.type === 'text') {
-            questionElement.innerHTML += `<input type="text" name="question${index}" placeholder="Your answer">`;
-        } else if (question.type === 'rating') {
-            questionElement.innerHTML += `
-                <select name="question${index}">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-            `;
-        }
+            }
 
-        surveyContent.appendChild(questionElement);
-    });
+            surveyContent.appendChild(questionElement);
+        });
 
-    // Add a submit button
-    const submitButton = document.createElement('button');
-    submitButton.textContent = 'Submit Survey';
-    submitButton.id = 'submitSurveyBtn';
-    surveyContent.appendChild(submitButton);
-}
+        // Add a submit button
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Submit Survey';
+        submitButton.id = 'submitSurveyBtn';
+        surveyContent.appendChild(submitButton);
+    }
     
     loadSurvey();
 
