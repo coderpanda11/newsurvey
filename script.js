@@ -1,7 +1,4 @@
-let surveyData;
 document.addEventListener("DOMContentLoaded", () => {
-
-    
     // Registration functionality
     const registrationForm = document.getElementById('registrationForm');
     if (registrationForm) {
@@ -199,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const surveyKey = urlParams.get('id');
     const surveyContent = document.getElementById('surveyContent');
 
-    
+    let surveyData;
 
     // Response Submmission
     document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
