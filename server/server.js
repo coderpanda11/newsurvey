@@ -4,6 +4,7 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const AWS = require('aws-sdk');
 
 const app = express();
 const PORT = 3000;
@@ -11,6 +12,16 @@ const PORT = 3000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+
+// Configure AWS SDK
+AWS.config.update({
+    region: 'eu-north-1', // Replace with your region
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID, // Use environment variable for security
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY // Use environment variable for security
+});
+
+// Create DynamoDB DocumentClient
+const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
