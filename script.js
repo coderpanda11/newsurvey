@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     // Registration functionality
     const registrationForm = document.getElementById('registrationForm');
     if (registrationForm) {
@@ -196,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const surveyKey = urlParams.get('id');
     const surveyContent = document.getElementById('surveyContent');
 
-    let surveyData;
 
     async function loadSurvey() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -216,6 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await s3.getObject(params).promise();
             const surveyData = JSON.parse(data.Body.toString('utf-8'));
             displaySurvey(surveyData);
+            console.log(surveyData.questions);
         } catch (error) {
             console.error('Error fetching survey:', error);
             alert('error');
@@ -258,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
     
-    loadSurvey();
+    await loadSurvey();
 
     // Response Submmission
     document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
@@ -461,117 +461,4 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
-    // // Function to fetch data from AWS
-    // async function fetchData() {
-    //     const params = {
-    //         Bucket: 'pandabucket1337',
-    //         Key: 'feedback/1732428880972.json'
-    //     };
-
-    //     try {
-    //         const data = await s3.getObject(params).promise();
-    //         const jsonData = JSON.parse(data.Body.toString('utf-8'));
-    //         return jsonData; // Return the parsed JSON data
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //         return null; // Return null if there is an error
-    //     }
-    // }
-
-    // // Function to create charts
-    // async function createCharts() {
-    //     const data = await fetchData();
-
-    //     // Check if data is null or undefined
-    //     if (!data) {
-    //         console.error('No data available for chart creation.');
-    //         return; // Exit the function if no data is available
-    //     }
-
-    //     // Check if data is an array
-    //     if (!Array.isArray(data)) {
-    //         console.error('Fetched data is not an array:', data);
-    //         return; // Exit if data is not an array
-    //     }
-
-    //     // Data Processing
-    //     const labels = data.map(item => item.label);
-    //     const values = data.map(item => item.value);
-
-    //     // Check if labels and values are not empty
-    //     if (labels.length === 0 || values.length === 0) {
-    //         console.error('Labels or values are empty. Cannot create charts.');
-    //         return; // Exit if there's no data to plot
-    //     }
-
-    //     // Bar Chart
-    //     const barCtx = document.getElementById('barChart').getContext('2d');
-    //     new Chart(barCtx, {
-    //         type: 'bar',
-    //         data: {
-    //             labels: labels,
-    //             datasets: [{
-    //                 label: 'Bar Chart Data',
-    //                 data: values,
-    //                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
-    //                 borderColor: 'rgba(75, 192, 192, 1)',
-    //                 borderWidth: 1
-    //             }]
-    //         },
-    //         options: {
-    //             scales: {
-    //                 y: {
-    //                     beginAtZero: true
-    //                 }
-    //             }
-    //         }
-    //     });
-
-    //     // Pie Chart
-    //     const pieCtx = document.getElementById('pieChart').getContext('2d');
-    //     new Chart(pieCtx, {
-    //         type: 'pie',
-    //         data: {
-    //             labels: labels,
-    //             datasets: [{
-    //                 label: 'Pie Chart Data',
-    //                 data: values,
-    //                 backgroundColor: [
-    //                     'rgba(255, 99, 132, 0.2)',
-    //                     'rgba(54, 162, 235, 0.2)',
-    //                     'rgba(255, 206, 86, 0.2)',
-    //                     'rgba(75, 192, 192, 0.2)',
-    //                     'rgba(153, 102, 255, 0.2)',
-    //                     'rgba(255, 159, 64, 0.2)'
-    //                 ],
-    //                 borderColor: [
-    //                     'rgba(255, 99, 132, 1)',
-    //                     'rgba(54, 162, 235, 1)',
-    //                     'rgba(255, 206, 86, 1)',
-    //                     'rgba(75, 192, 192, 1)',
-    //                     'rgba(153, 102, 255, 1)',
-    //                     'rgba(255, 159, 64, 1)'
-    //                 ],
-    //                 borderWidth: 1
-    //             }]
-    //         },
-    //         options: {
-    //             responsive: true,
-    //             plugins: {
-    //                 legend: {
-    //                     position: 'top',
-    //                 },
-    //                 title: {
-    //                     display: true,
-    //                     text: 'Pie Chart Data'
-    //                 }
-    //             }
-    //         }
-    //     });
-    // }
-
-    // // Call the createCharts function to initialize the charts
-    // createCharts();
-
 });
