@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     AWS.config.update(AWS_CONFIG);
+    const dynamoDB = new AWS.DynamoDB.DocumentClient();
+    
     const s3 = new AWS.S3();
 
     // Initialize event listeners
@@ -28,13 +30,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         const username = document.getElementById('username').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-
-        const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
-        existingUsers.push({ username, email, password });
-        localStorage.setItem('users', JSON.stringify(existingUsers));
-
-        alert('Registration successful! You can now log in.');
-        window.location.href = 'login.html';
+    
+        // Create a params object for DynamoDB
+        const params = {
+            TableName: 'Credentials',
+            Item: {
+                username: username, // Primary key
+                email: email,       // Additional attribute
+                password: password   // Additional attribute (consider hashing this)
+            }
+        };
+    
+        try {
+            // Store the user in DynamoDB
+            await dynamoDB.put(params).promise();
+            alert('Registration successful! You can now log in.');
+            window.location.href = 'login.html';
+        } catch (error) {
+            console.error('Error registering user:', error);
+            alert('Error registering user: ' + error.message);
+        }
     }
 
     function initLogin() {
@@ -48,15 +63,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-
-        const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
-        const user = storedUsers.find(user => user.username === username && user.password === password);
-
-        if (user) {
+    
+        try {
+            const response = await fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+    
+            if (!response.ok) {
+                throw new Error(await response.text());
+            }
+    
             alert('Login successful!');
-            window.location.href = 'userChoice.html';
-        } else {
-            alert('Invalid username or password.');
+            window.location.href = 'userChoice.html'; // Redirect to user choice page
+        } catch (error) {
+            console.error('Error logging in:', error);
+            alert('Login failed: ' + error.message);
         }
     }
 
