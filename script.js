@@ -197,6 +197,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             const data = await s3.getObject(params).promise();
             const surveyData = JSON.parse(data.Body.toString('utf-8'));
+            localStorage.setItem('surveyData', JSON.stringify(surveyData));
             displaySurvey(surveyData);
         } catch (error) {
             console.error('Error fetching survey:', error);
