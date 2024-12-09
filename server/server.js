@@ -21,7 +21,33 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// API endpoint to verify user login
+app.post('/login',async (req,res) =>{
+    const { username, password } = req.body;
 
+    const params = {
+        TableName: 'Credentials',
+        Key: {
+            username: username
+
+        }
+    };
+
+    try{
+        const data = await dynamoDB.get(params).promise();
+        if (!data.Item){
+            return res.status(401).send('User not found.');
+        }
+        if (data.Item.password === password) {
+            res.status(200).send('Login successful.');
+        } else {
+            res.status(401).send('Invalid Username or Password');
+        }
+    } catch (error){
+        console.error("Error logging in:", error);
+        res.status(500).send('Error logging in: '+ error.message);
+    }
+});
 
 // API endpoint to send reset password email
 app.post('/send-reset-email', async (req, res) => {
