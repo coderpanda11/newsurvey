@@ -202,20 +202,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         const surveyKey = urlParams.get('id'); // Get the survey key from the URL
     
-        if (!surveyKey || !surveyData.questions) {
-            alert('Survey Data no avaliable');
+        if (!surveyData) {
+            alert('Survey Data no available');
             return; // Exit if no key is found
         }
     
         const params = {
             Bucket: 'pandabucket1337',
-            Key: `surveys/${surveyKey}.json` 
+            Key: `surveys/${surveyKey}.json` // Ensure this is set correctly
         };
     
         try {
             const data = await s3.getObject(params).promise();
-            surveyData = JSON.parse(data.Body.toString('utf-8'));
-            displaySurvey(surveyData); 
+            console.log('Fetched Data:', data); // Log the fetched data
+            surveyData = JSON.parse(data.Body.toString('utf-8')); // Ensure surveyData is defined
+            console.log('Parsed Survey Data:', surveyData); // Log the parsed survey data
+            displaySurvey(surveyData); // Call a function to display the survey
         } catch (error) {
             console.error('Error fetching survey:', error);
             alert('Error loading survey data.');
