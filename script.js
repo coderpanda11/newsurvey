@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         const surveyKey = urlParams.get('id'); // Get the survey key from the URL
     
-        if (!surveyData || !surveyData.questions) {
+        if (!surveyData) {
             alert("No valid survey data available.");
             return;
         }
