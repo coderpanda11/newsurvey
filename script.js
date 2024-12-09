@@ -4,9 +4,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         secretAccessKey: 'G1R3uFTcl3KvFyyoaA+cKv2cQnqebwZXwqsqCc/0', // Replace with your Secret Access Key
         region: 'eu-north-1' // Replace with your bucket's region
     };
-
-    const dynamoDB = new AWS.dynamoDB.DocumentClient();
+    
     AWS.config.update(AWS_CONFIG);
+    const dynamoDB = new AWS.dynamoDB.DocumentClient();
+    
     const s3 = new AWS.S3();
 
     // Initialize event listeners
