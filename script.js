@@ -258,7 +258,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     }
     
-    await loadSurvey();
+    
 
     // Response Submmission
     document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
@@ -302,6 +302,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert('There was an error submitting your responses.');
         }
     });
+
+    await loadSurvey();
 
     // Feedback Form Submission
     const feedbackForm = document.getElementById('feedbackForm');
