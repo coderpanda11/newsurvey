@@ -1,4 +1,7 @@
+let surveyData;
 document.addEventListener("DOMContentLoaded", () => {
+
+    
     // Registration functionality
     const registrationForm = document.getElementById('registrationForm');
     if (registrationForm) {
@@ -196,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const surveyKey = urlParams.get('id');
     const surveyContent = document.getElementById('surveyContent');
 
-    let surveyData;
+    
 
     // Response Submmission
     document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
@@ -245,9 +248,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         const surveyKey = urlParams.get('id'); // Get the survey key from the URL
     
-        if (!surveyKey) {
-            console.error('No survey key provided in the URL.');
-            return; // Exit if no key is found
+        if (!surveyData || !surveyData.questions) {
+            alert("No valid survey data available.");
+            return;
         }
     
         const params = {
