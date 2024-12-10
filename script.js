@@ -369,4 +369,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             await s3.putObject(params).promise();
         }
     }
+    // Get the form element
+    const surveyForm = document.getElementById("surveyForm");
+
+    // Add an event listener to the form submission
+    surveyForm.addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        // Get the survey title
+        const surveyTitle = document.getElementById("surveyTitle").value;
+
+        // Store the survey title in localStorage
+        localStorage.setItem("surveyTitle", surveyTitle);
+
+        // Optionally, display the title in the preview section
+        const surveyPreview = document.getElementById("surveyPreview");
+        urveyPreview.innerHTML = `<strong>Survey Title:</strong> ${surveyTitle}`;
+    });
+
+    
 });
