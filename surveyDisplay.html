@@ -168,12 +168,6 @@
             console.error('Error uploading responses:', error);
             alert("Error submitting responses");
         }
-        window.addEventListener('DOMContentLoaded', () => {
-            const surveyTitle = localStorage.getItem('surveyTitle');
-            if (surveyTitle) {
-                document.querySelector('header h1').textContent = `Your ${surveyTitle}`;
-            }
-        });
     });
     </script>
 
