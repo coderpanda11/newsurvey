@@ -384,8 +384,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Optionally, display the title in the preview section
         const surveyPreview = document.getElementById("surveyPreview");
-        urveyPreview.innerHTML = `<strong>Survey Title:</strong> ${surveyTitle}`;
+        surveyPreview.innerHTML = `<strong>Survey Title:</strong> ${surveyTitle}`;
     });
 
+    // Retrieve the stored survey title when the page is loaded
+    window.addEventListener("load", function() {
+        const savedTitle = localStorage.getItem("surveyTitle");
+
+        if (savedTitle) {
+            // If there is a saved title, display it in the preview section
+            const surveyPreview = document.getElementById("surveyPreview");
+            surveyPreview.innerHTML = `<strong>Survey Title:</strong> ${savedTitle}`;
+        }
+    });
     
 });
