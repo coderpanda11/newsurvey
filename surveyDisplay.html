@@ -4,9 +4,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Survey</title>
-    <link rel="stylesheet" href="style.css">
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1340.0.min.js"></script> 
-    <script src="script.js" defer></script> 
+    <script src="script.js" defer></script>
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            color: #384047;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f2f0;
+        }
+
+        header {
+            background-color: #000102;
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        nav {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: absolute;
+            top: 20px;
+            right: 30px; /* Adjusted to ensure links are well-spaced */
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 1.2em;
+            margin-left: 30px;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            max-width: 600px;
+            margin: auto;
+            height: calc(97vh - 120px); /* Adjusts for the header and footer height */
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+        button {
+            width: 60%;
+            padding: 15px;
+            background-color: #24caeb;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #00d9ff;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            margin: 0;
+            padding: 10px 0;
+            background-color: #060606;
+            color: #f4efef;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+}
+
+
+        h2 {
+            text-align: center;
+            margin: 30px 0 10px;
+            color: #384047;
+        }
+
+        #surveyContent {
+            margin-bottom: 20px;
+        }
+
+        #surveyContent div {
+            margin-bottom: 20px;
+        }
+
+        #surveyContent input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f4f7f8;
+            font-size: 16px;
+        }
+
+        #surveyContent input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        #surveyContent ul {
+            padding-left: 20px;
+        }
+        .p3 {
+            font-family: 'Quicksand', sans-serif;
+        }
+    </style> 
 </head>
 <body>
     <header>
