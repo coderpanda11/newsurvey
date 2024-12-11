@@ -376,26 +376,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     surveyForm.addEventListener("submit", function(event) {
         event.preventDefault(); // Prevent the form from submitting normally
 
-        // Get the survey title
-        const surveyTitle = document.getElementById("surveyTitle").value;
-
-        // Store the survey title in localStorage
-        localStorage.setItem("surveyTitle", surveyTitle);
-
-        // Optionally, display the title in the preview section
-        const surveyPreview = document.getElementById("surveyPreview");
-        surveyPreview.innerHTML = `<strong>Survey Title:</strong> ${surveyTitle}`;
-    });
-
-    // Retrieve the stored survey title when the page is loaded
-    window.addEventListener("load", function() {
-        const savedTitle = localStorage.getItem("surveyTitle");
-
-        if (savedTitle) {
-            // If there is a saved title, display it in the preview section
-            const surveyPreview = document.getElementById("surveyPreview");
-            surveyPreview.innerHTML = `<strong>Survey Title:</strong> ${savedTitle}`;
-        }
-    });
     
 });
