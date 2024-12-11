@@ -43,6 +43,26 @@
         <p>&copy; 2023 Aashay. All rights reserved.</p>
     </footer>
 
-    <script src="script.js" defer></script> 
+    <script src="script.js" defer></script>
+    
+    <!-- new addition  -->
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent form submission
+    
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+    
+            // Dummy authentication (replace with real validation if needed)
+            if (username === "user" && password === "pass") {
+                sessionStorage.setItem("username", username); // Set session data
+                alert("Login successful!");
+                window.location.href = "dashboard.html"; // Redirect to dashboard
+            } else {
+                alert("Invalid credentials! Please try again.");
+            }
+        });
+    </script>
+        
 </body>
 </html>
