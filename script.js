@@ -369,12 +369,5 @@ document.addEventListener("DOMContentLoaded", async () => {
             await s3.putObject(params).promise();
         }
     }
-    // Get the form element
-    const surveyForm = document.getElementById("surveyForm");
-
-    // Add an event listener to the form submission
-    surveyForm.addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent the form from submitting normally
-    });
 
 });
