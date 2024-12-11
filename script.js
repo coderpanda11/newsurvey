@@ -375,6 +375,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Add an event listener to the form submission
     surveyForm.addEventListener("submit", function(event) {
         event.preventDefault(); // Prevent the form from submitting normally
+    });
 
-    
 });
