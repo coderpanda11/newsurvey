@@ -143,32 +143,54 @@
     </main>
 
     <script>
-        document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
-        const responses = gatherSurveyResponses(); 
+        document.addEventListener("DOMContentLoaded", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const surveyKey = urlParams.get('id');
 
-        if (responses.length === 0) {
-            alert('No responses to submit.');
+        if (!surveyKey) {
+            console.error('No survey key provided in the URL.');
             return;
         }
 
-        const csvData = convertResponsesToCSV(responses);
-        const randomNum = Date.now(); // Using current timestamp as a unique identifier
-
         const params = {
             Bucket: 'pandabucket1337',
-            Key: `responses/${randomNum}.csv`,
-            Body: new Blob([csvData], { type: 'text/csv' }),
-            ContentType: 'text/csv'
+            Key: `surveys/${surveyKey}.json`
         };
 
         try {
-            await s3.putObject(params).promise();
-            alert('Responses submitted successfully!');
+            const data = await s3.getObject(params).promise();
+            const surveyData = JSON.parse(data.Body.toString('utf-8'));
+            displaySurvey(surveyData);
         } catch (error) {
-            console.error('Error uploading responses:', error);
-            alert("Error submitting responses");
+            console.error('Error fetching survey:', error);
+            alert('Error fetching survey');
         }
-    
+
+        function displaySurvey(surveyData) {
+            const surveyContent = document.getElementById('surveyContent');
+            surveyContent.innerHTML = `<h2>${surveyData.title}</h2>`; // Display the survey title
+
+            surveyData.questions.forEach((question, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.innerHTML = `<strong>${question.question}</strong>`; // Display the question text
+
+                // Handle different question types
+                if (question.type === 'Multiple choice') {
+                    question.options.forEach((option, optionIndex) => {
+                        const optionElement = document.createElement('div');
+                        optionElement.innerHTML = `
+                            <input type="radio" name="question${index}" id="question${index}option${optionIndex}" value="${option}">
+                            <label for="question${index}option${optionIndex}">${option}</label>
+                        `;
+                        questionElement.appendChild(optionElement);
+                    });
+                } else if (question.type === 'Short answer') {
+                    questionElement.innerHTML += `<input type="text" name="question${index}" placeholder="Your answer">`;
+                } // Add more question types as needed
+
+                surveyContent.appendChild(questionElement);
+            });
+        }
     });
     </script>
 

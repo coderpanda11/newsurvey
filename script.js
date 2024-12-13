@@ -125,13 +125,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const surveyForm = document.getElementById('surveyForm');
         if (surveyForm) {
             const questionsArray = [];
-            const addQuestionBtn = document.getElementById('addQuestionBtn');
-            const optionsContainer = document.getElementById('optionsContainer');
-            const questionTypeSelect = document.getElementById('questionType');
-
-            questionTypeSelect.addEventListener('change', () => {
-                optionsContainer.style.display = questionTypeSelect.value === 'multipleChoice' ? 'block' : ' none';
-            });
+            const addQuestionBtn = document.getElementById('addQuestionButton');
 
             addQuestionBtn.addEventListener('click', () => addQuestion(questionsArray));
 
@@ -141,40 +135,149 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         }
     }
+    const questionContainer = document.getElementById ("questionContainer");
+    const addQuestionButton = document.getElementById("addQuestionButton");
 
-    function addQuestion(questionsArray) {
-        const question = document.getElementById('question').value.trim();
-        const questionType = document.getElementById('questionType').value;
-        const options = document.getElementById('options').value.split(',').map(option => option.trim());
+    const questionTypes = [
+        "Short answer",
+        "Paragraph",
+        "Multiple choice",
+        "Checkboxes",
+        "Dropdown",
+        "File upload",
+        "Linear scale",
+        "Rating",
+        "Multiple choice grid",
+        "Checkbox grid",
+        "Date",
+        "Time"
+    ];
 
-        if (!question) {
-            alert('Please enter a question.');
-            return;
-        }
+    const createOptionsContainer = (type) => {
+        const optionsContainer = document.createElement("div");
+        optionsContainer.classList.add("options-container");
 
-        questionsArray.push({ question, type: questionType, options });
-        displayQuestionPreview(question, questionType, options);
-        document.getElementById('surveyForm').reset();
-        document.getElementById('optionsContainer').style.display = 'none';
-    }
+        if (type === "Multiple choice" || type === "Checkboxes" || type === "Dropdown") {
+            const addOptionLink = document.createElement("span");
+            addOptionLink.classList.add("add-option");
+            addOptionLink.innerText = "Add option";
 
-    function displayQuestionPreview(question, questionType, options) {
-        const surveyPreview = document.getElementById('surveyPreview');
-        const questionElement = document.createElement('div');
-        questionElement.innerHTML = `<strong>${question}</strong>`;
-
-        if (questionType === 'multipleChoice') {
-            const optionsList = document.createElement('ul');
-            options.forEach(option => {
-                const li = document.createElement('li');
-                li.textContent = option;
-                optionsList.appendChild(li);
+            addOptionLink.addEventListener("click", () => {
+                const optionInput = document.createElement("input");
+                optionInput.type = "text";
+                optionInput.placeholder = "Option";
+                optionInput.style.marginTop = "5px";
+                optionsContainer.appendChild(optionInput);
             });
-            questionElement.appendChild(optionsList);
+
+            optionsContainer.appendChild(addOptionLink);
+        } else if (type === "File upload") {
+            const fileInput = document.createElement("input");
+            fileInput.type = "file";
+            optionsContainer.appendChild(fileInput);
+        } else if (type === "Linear scale") {
+            optionsContainer.innerHTML = `
+                <label>Minimum value: <input type="number" min="1" max="10" value="1"></label>
+                <label>Maximum value: <input type="number" min="1" max="10" value="5"></label>
+            `;
+        } else if (type === "Date" || type === "Time") {
+            const input = document.createElement("input");
+            input.type = type.toLowerCase();
+            optionsContainer.appendChild(input);
         }
 
-        surveyPreview.appendChild(questionElement);
-    }
+        return optionsContainer;
+    };
+
+    const createQuestionElement = () => {
+        const questionDiv = document.createElement("div");
+        questionDiv.classList.add("form-group");
+
+        const label = document.createElement("label");
+        label.innerText = "Question";
+        questionDiv.appendChild(label);
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Enter your question";
+        questionDiv.appendChild(input);
+
+        const questionTypeDiv = document.createElement("div");
+        questionTypeDiv.classList.add("question-type");
+
+        const questionTypeLabel = document.createElement("span");
+        questionTypeLabel.innerText = "Type:";
+        questionTypeDiv.appendChild(questionTypeLabel);
+
+        const questionTypeSelect = document.createElement("select");
+        questionTypes.forEach(type => {
+            const option = document.createElement("option");
+            option.value = type;
+            option.innerText = type;
+            questionTypeSelect.appendChild(option);
+        });
+
+        questionTypeSelect.addEventListener("change", () => {
+            const currentOptionsContainer = questionDiv.querySelector(".options-container");
+            if (currentOptionsContainer) {
+                questionDiv.removeChild(currentOptionsContainer);
+            }
+            const newOptionsContainer = createOptionsContainer(questionTypeSelect.value);
+            questionDiv.appendChild(newOptionsContainer);
+        });
+
+        questionTypeDiv.appendChild(questionTypeSelect);
+        questionDiv.appendChild(questionTypeDiv);
+
+        const removeQuestionLink = document.createElement("span");
+        removeQuestionLink.innerText = "Remove question";
+        removeQuestionLink.classList.add("remove-question");
+        removeQuestionLink.addEventListener("click", () => {
+            questionContainer.removeChild(questionDiv);
+        });
+
+        questionDiv.appendChild(removeQuestionLink);
+
+        return questionDiv;
+    };
+
+    addQuestionButton.addEventListener("click", () => {
+        const newQuestion = createQuestionElement();
+        questionContainer.appendChild(newQuestion);
+    });    
+    // function addQuestion(questionsArray) {
+    //     const question = document.getElementById('question').value.trim();
+    //     const questionType = document.getElementById('questionType').value;
+    //     const options = document.getElementById('options').value.split(',').map(option => option.trim());
+
+    //     if (!question) {
+    //         alert('Please enter a question.');
+    //         return;
+    //     }
+
+    //     questionsArray.push({ question, type: questionType, options });
+    //     displayQuestionPreview(question, questionType, options);
+    //     document.getElementById('surveyForm').reset();
+    //     document.getElementById('optionsContainer').style.display = 'none';
+    // }
+
+    // function displayQuestionPreview(question, questionType, options) {
+    //     const surveyPreview = document.getElementById('surveyPreview');
+    //     const questionElement = document.createElement('div');
+    //     questionElement.innerHTML = `<strong>${question}</strong>`;
+
+    //     if (questionType === 'multipleChoice') {
+    //         const optionsList = document.createElement('ul');
+    //         options.forEach(option => {
+    //             const li = document.createElement('li');
+    //             li.textContent = option;
+    //             optionsList.appendChild(li);
+    //         });
+    //         questionElement.appendChild(optionsList);
+    //     }
+
+    //     surveyPreview.appendChild(questionElement);
+    // }
 
     async function submitSurvey(questionsArray) {
         const surveyTitle = document.getElementById('surveyTitle').value;
@@ -192,7 +295,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             await s3.putObject(params).promise();
             const shareableLink = `https://coderpanda11.github.io/newsurvey/surveyDisplay.html?id=${uid}`;
             alert(`Your survey has been created and can be accessed at: ${shareableLink}`);
-            window.location.href = shareableLink;
+            window.location.href = 'surveyDisplay.html'; //Change to sharableLink 
         } catch (error) {
             console.error('Error uploading survey:', error);
             alert("Error uploading survey");
@@ -230,13 +333,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function displaySurvey(surveyData) {
         const surveyContent = document.getElementById('surveyContent');
-        surveyContent.innerHTML = `<h2>${surveyData.title}</h2>`;
-
+        surveyContent.innerHTML = `<h2>${surveyData.title}</h2>`; // Display the survey title
+    
         surveyData.questions.forEach((question, index) => {
             const questionElement = document.createElement('div');
-            questionElement.innerHTML = `<strong>${question.question}</strong>`;
-
-            if (question.type === 'multipleChoice') {
+            questionElement.innerHTML = `<strong>${question.question}</strong>`; // Display the question text
+    
+            // Handle different question types
+            if (question.type === 'Multiple choice') {
                 question.options.forEach((option, optionIndex) => {
                     const optionElement = document.createElement('div');
                     optionElement.innerHTML = `
@@ -245,20 +349,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     `;
                     questionElement.appendChild(optionElement);
                 });
-            } else if (question.type === 'text') {
+            } else if (question.type === 'Short answer') {
                 questionElement.innerHTML += `<input type="text" name="question${index}" placeholder="Your answer">`;
-            } else if (question.type === 'rating') {
-                questionElement.innerHTML += `
-                    <select name="question${index}">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    </select>
-                `;
-            }
-
+            } // Add more question types as needed
+    
             surveyContent.appendChild(questionElement);
         });
     }

@@ -3,175 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survey Maker</title>
-    <link href='https://fonts.googleapis.com/css?family=Nunito:400,300' rel='stylesheet' type='text/css'>
+    <title>Create Your Survey</title>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1340.0.min.js"></script> 
-    <script src="script.js" defer></script> <!-- Link to the external JavaScript file -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        *, *:before, *:after {
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Nunito', sans-serif;
-            color: #384047;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #23bbc6;
+            background-color: #f0f0f0;
         }
 
-        header {
-            background-color: #23bbc6;
-            padding: 20px;
-            text-align: center;
-            color: #fff;
-            position: relative;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2.5em;
-            text-decoration: underline;
-        }
-
-        nav {
-            display: flex;
-            justify-content: flex-end; /* Align the links to the right */
-            align-items: center;
-            position: absolute;
-            top: 20px;
-            right: 210px; /* Place the nav at the top-right corner */
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #fff;
-            font-size: 1.2em;
-            margin-left: 30px; /* Space between the links */
-        }
-
-        nav a:last-child {
-            position: relative; /* Allow the icon to be on the same line */
-        }
-
-        nav a:last-child::after {
-            content: url("/logout-icon.svg"); /* Replace with your logout icon path */
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            margin-left: 5px;
-        }
-
-        main {
-            max-width: 600px;
-            margin: 20px auto;
+        .form-container {
+            max-width: 700px;
+            margin: 60px auto;
             background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 40px;
         }
 
-        form {
-            margin: 0;
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-description {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
 
         label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #444;
             display: block;
             margin-bottom: 8px;
-            font-weight: bold;
         }
 
-        input[type="text"],
-        select {
+        input, textarea, select {
             width: 100%;
             padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f4f7f8;
-            font-size: 16px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #fff;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #007bff;
+        }
+
+        textarea {
+            resize: none;
+            height: 120px;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
         }
 
         button {
-            width: 100%;
-            padding: 15px;
-            background-color: #f19c2c;
+            background-color: #007bff;
+            color: white;
             border: none;
-            color: #fff;
-            font-size: 16px;
+            padding: 10px 20px;
+            font-size: 1rem;
             border-radius: 5px;
             cursor: pointer;
-            margin-bottom: 10px;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
-            background-color: #16b4e8;
+            background-color: #0056b3;
         }
 
-        h2 {
-            text-align: center;
-            margin: 30px 0 10px;
-            color: #384047;
+        .remove-question {
+            color: #ff4d4d;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 5px;
         }
 
-        #surveyPreview {
-            padding: 20px;
-            background-color: #e8eeef;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+        .options-container {
+            margin-top: 10px;
         }
 
-        footer {
-            text-align: center;
-            margin: 20px 0;
-            color: #000000;
+        .add-option {
+            color: #007bff;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 5px;
         }
+
     </style>
 </head>
 <body>
-    <header>
-        <h1>Create Your Survey</h1>
-        <nav>
-            <a href="dashboardCreator.html">Dashboard</a>
-            <a href="pricing.html">Pricing</a>
-            <a href="logout.html">Logout</a>
-        </nav>
-    </header>
-    
-    <main>
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">Create Your Survey</h1>
+            <p class="form-description">Add questions of different types to your survey.</p>
+        </div>
+
         <form id="surveyForm">
-            <label for="surveyTitle">Survey Title:</label>
-            <input type="text" id="surveyTitle" name="surveyTitle">
-            
-            <label for="question">Question:</label>
-            <input type="text" id="question" name="question">
-            
-            <label for="questionType">Question Type:</label>
-            <select id="questionType" name="questionType">
-                <option value="text">Text</option>
-                <option value="multipleChoice">Multiple Choice</option>
-                <option value="rating">Rating</option>
-            </select>
-            
-            <div id="optionsContainer" style="display: none;">
-                <label for="options">Options (comma-separated):</label>
-                <input type="text" id="options" name="options" placeholder="Option 1, Option 2, Option 3">
+            <div class="form-group">
+                <label for="surveyTitle">Survey Title:</label>
+                <input type="text" id="surveyTitle" placeholder="Enter your survey title" required>
             </div>
-
-            <button type="button" id="addQuestionBtn">Add Question</button>
-            <button type="submit">Create Survey</button>
+        
+            <div class="question-container" id="questionContainer">
+                <!-- Questions will dynamically be added here -->
+            </div>
+        
+            <div class="add-question">
+                <button type="button" id="addQuestionButton">Add Question</button>
+            </div>
+        
+            <div class="form-footer">
+                <button type="submit">Create Survey</button>
+            </div>
         </form>
+    </div>
 
-        <h2>Survey Preview</h2>
-        <div id="surveyPreview"></div>
-
-    </main>
-
-    <footer>
-        <p>&copy; 2023 Your Company Name. All rights reserved.</p>
-    </footer>
+    <footer>&copy; 2024 Your Company Name. All rights reserved.</footer>
+    <script src="script.js" defer></script>
 </body>
 </html>
