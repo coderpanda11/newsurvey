@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .form-container {
+            max-width: 700px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 40px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-description {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #444;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #fff;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #007bff;
+        }
+
+        textarea {
+            resize: none;
+            height: 120px;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .required {
+            color: red;
+            margin-left: 5px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .question-type {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .question-type select {
+            margin-left: 10px;
+        }
+
+        .add-question {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .question-container {
+            margin-top: 20px;
+        }
+
+        .remove-question {
+            color: #ff4d4d;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .options-container {
+            margin-top: 10px;
+        }
+
+        .add-option {
+            color: #007bff;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">Google Forms Clone</h1>
+            <p class="form-description">Create your form by adding questions of different types.</p>
+        </div>
+
+        <form id="formClone">
+            <div class="question-container" id="questionContainer">
+                <!-- Questions will dynamically be added here -->
+            </div>
+
+            <div class="add-question">
+                <button type="button" id="addQuestionButton">Add Question</button>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <footer>&copy; 2024 Forms Clone. All rights reserved.</footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const questionContainer = document.getElementById("questionContainer");
+            const addQuestionButton = document.getElementById("addQuestionButton");
+
+            const questionTypes = [
+                "Short answer",
+                "Paragraph",
+                "Multiple choice",
+                "Checkboxes",
+                "Dropdown",
+                "File upload",
+                "Linear scale",
+                "Rating",
+                "Multiple choice grid",
+                "Checkbox grid",
+                "Date",
+                "Time"
+            ];
+
+            const createOptionsContainer = (type) => {
+                const optionsContainer = document.createElement("div");
+                optionsContainer.classList.add("options-container");
+
+                if (type === "Multiple choice" || type === "Checkboxes" || type === "Dropdown") {
+                    const addOptionLink = document.createElement("span");
+                    addOptionLink.classList.add("add-option");
+                    addOptionLink.innerText = "Add option";
+
+                    addOptionLink.addEventListener("click", () => {
+                        const optionInput = document.createElement("input");
+                        optionInput.type = "text";
+                        optionInput.placeholder = "Option";
+                        optionInput.style.marginTop = "5px";
+                        optionsContainer.appendChild(optionInput);
+                    });
+
+                    optionsContainer.appendChild(addOptionLink);
+                } else if (type === "File upload") {
+                    const fileInput = document.createElement("input");
+                    fileInput.type = "file";
+                    optionsContainer.appendChild(fileInput);
+                } else if (type === "Linear scale") {
+                    optionsContainer.innerHTML = `
+                        <label>Minimum value: <input type="number" min="1" max="10" value="1"></label>
+                        <label>Maximum value: <input type="number" min="1" max="10" value="5"></label>
+                    `;
+                } else if (type === "Date" || type === "Time") {
+                    const input = document.createElement("input");
+                    input.type = type.toLowerCase();
+                    optionsContainer.appendChild(input);
+                }
+
+                return optionsContainer;
+            };
+
+            const createQuestionElement = () => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("form-group");
+
+                const label = document.createElement("label");
+                label.innerText = "Question";
+                questionDiv.appendChild(label);
+
+                const input = document.createElement("input");
+                input.type = "text";
+                input.placeholder = "Enter your question";
+                questionDiv.appendChild(input);
+
+                const questionTypeDiv = document.createElement("div");
+                questionTypeDiv.classList.add("question-type");
+
+                const questionTypeLabel = document.createElement("span");
+                questionTypeLabel.innerText = "Type:";
+                questionTypeDiv.appendChild(questionTypeLabel);
+
+                const questionTypeSelect = document.createElement("select");
+                questionTypes.forEach(type => {
+                    const option = document.createElement("option");
+                    option.value = type;
+                    option.innerText = type;
+                    questionTypeSelect.appendChild(option);
+                });
+
+                questionTypeSelect.addEventListener("change", () => {
+                    const currentOptionsContainer = questionDiv.querySelector(".options-container");
+                    if (currentOptionsContainer) {
+                        questionDiv.removeChild(currentOptionsContainer);
+                    }
+                    const newOptionsContainer = createOptionsContainer(questionTypeSelect.value);
+                    questionDiv.appendChild(newOptionsContainer);
+                });
+
+                questionTypeDiv.appendChild(questionTypeSelect);
+                questionDiv.appendChild(questionTypeDiv);
+
+                const removeQuestionLink = document.createElement("span");
+                removeQuestionLink.innerText = "Remove question";
+                removeQuestionLink.classList.add("remove-question");
+                removeQuestionLink.addEventListener("click", () => {
+                    questionContainer.removeChild(questionDiv);
+                });
+
+                questionDiv.appendChild(removeQuestionLink);
+
+                return questionDiv;
+            };
+
+            addQuestionButton.addEventListener("click", () => {
+                const newQuestion = createQuestionElement();
+                questionContainer.appendChild(newQuestion);
+            });
+        });
+    </script>
+</body>
+</html>
