@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const resetEmail = document.getElementById('resetEmail').value;
 
         try {
-            const response = await fetch('http://192.168.1.5:3000/send-reset-email', {
+            const response = await fetch('http://localhost:3000/send-reset-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: resetEmail })
