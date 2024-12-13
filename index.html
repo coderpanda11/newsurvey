@@ -4,25 +4,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Global Styles */
+        body {
+            background-color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            color: #ffffff;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            position: relative;
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #0f3460, #1a1a2e);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        nav {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #f4f4f4;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            background-color: #e94560;
+            border-color: #e94560;
+            color: #ffffff;
+        }
+
+        .shield {
+            margin: 20px auto;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #e94560, #0f3460);
+            border-radius: 10%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .shield h1 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Main Content */
+        main {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        main h2 {
+            font-size: 28px;
+            color: #e94560;
+            margin-bottom: 20px;
+        }
+
+        main p {
+            font-size: 18px;
+            color: #100101;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            margin: 0;
+            padding: 10px 0;
+            background-color: #060606;
+            color: #f4efef;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+
+        footer a {
+            color: #e94560;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to Our Feedback Platform</h1>
         <nav>
             <a href="login.html">Login</a>
             <a href="registration.html">Register</a>
             <a href="pricing.html">Pricing</a>
             <a href="blog.html">Blog</a>
         </nav>
+        <div class="shield">
+            <h1>Welcome</h1>
+        </div>
     </header>
-    
+
     <main>
+        <h2>Welcome to Our Feedback Platform</h2>
         <p>Your feedback is valuable to us. Please log in to provide your feedback.</p>
     </main>
 
     <footer>
-        <p>&copy; 2023 Aashay. All rights reserved.</p>
+        <p>&copy; 2023 Aashay. All rights reserved. | <a href="privacy.html">Privacy Policy</a></p>
     </footer>
 </body>
 </html>

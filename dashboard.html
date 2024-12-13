@@ -129,6 +129,7 @@
             <a href="index.html">Home</a>
             <a href="feedback.html">Feedback Form</a>
             <a href="templates.html">Templates</a>
+            <a href="#" onclick="logout()">Logout</a>  <!-- new addition -->
         </nav>
         <div class="shield">
             <div class="dashboard">User Dashboard</div>
@@ -139,6 +140,26 @@
         <h2>Welcome to Your Dashboard!</h2>
         <p>From here, you can provide feedback or choose from a variety of feedback templates to streamline your experience.</p>
     </main>
+
+    <!-- new addition -->
+    <script>
+        window.onload = function () {
+            const username = sessionStorage.getItem("username");
+            if (!username) {
+                alert("Session expired. Please log in again.");
+                window.location.href = "login.html"; // Redirect to login
+            } else {
+                document.querySelector("main h2").innerText = `Welcome, ${username}!`;
+            }
+        };
+    
+        function logout() {
+            sessionStorage.clear(); // Clear session data
+            alert("Logged out successfully!");
+            window.location.href = "logout.html"; // Redirect to logout page
+        }
+    </script>
+    
 
     <footer>
         <p>&copy; 2023 Your Company Name. All rights reserved. | <a href="privacy.html">Privacy Policy</a></p>
