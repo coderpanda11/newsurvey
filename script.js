@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const AWS_CONFIG = {
         accessKeyId: 'AKIARHJJM2QJME3ADS53', // Replace with your Access Key ID
-        secretAccessKey: 'G1R3uFTcl3KvFyyoaA+cKv2cQnqebwZXwqsqCc/0', // Replace with your Secret Access Key
+        secretAccessKey: 'G1R3uFTcl3KvFyyoaA+cKv2cQnqebwZXwqsqCc/0',
         region: 'eu-north-1' // Replace with your bucket's region
     };
 
