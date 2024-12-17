@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         }
     }
-    
+    // Add questions
     function addQuestion(questionsArray) {
         const questionContainer = document.getElementById ("questionContainer");
         const addQuestionButton = document.getElementById("addQuestionButton");
