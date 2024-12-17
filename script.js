@@ -121,24 +121,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+// updated code starts from here - multiple dialog box creation bug fixed
+
     function initSurveyCreation() {
         const surveyForm = document.getElementById('surveyForm');
         if (surveyForm) {
             const questionsArray = [];
             const addQuestionBtn = document.getElementById('addQuestionButton');
-
+    
             addQuestionBtn.addEventListener('click', () => addQuestion(questionsArray));
-
+    
             surveyForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 await submitSurvey(questionsArray);
             });
         }
     }
+    
     // Add questions
     function addQuestion(questionsArray) {
         const questionContainer = document.getElementById("questionContainer");
-        const addQuestionButton = document.getElementById("addQuestionButton");
     
         const questionTypes = [
             "Short answer",
@@ -254,22 +256,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             questionDiv.appendChild(removeQuestionLink);
     
             // Add the question data to the questionsArray when the question is created
-            addQuestionButton.addEventListener("click", () => {
-                questionData.question = input.value; // Capture the question text
-                questionsArray.push(questionData);
-                console.log(questionsArray); // This will help you verify that the questions are being added correctly. You can also clear the input field after adding the question to improve user experience.
-                input.value = ""; // Clear the input field after adding
-            });
+            questionData.question = input.value; // Capture the question text
+            questionsArray.push(questionData);
     
-            questionDiv.appendChild(removeQuestionLink);
             return questionDiv;
         };
     
-        addQuestionButton.addEventListener("click", () => {
-            const newQuestionElement = createQuestionElement();
-            questionContainer.appendChild(newQuestionElement);
-        });
+        const newQuestionElement = createQuestionElement();
+        questionContainer.appendChild(newQuestionElement);
     }
+    
 
     async function submitSurvey(questionsArray) {
         const surveyTitle = document.getElementById('surveyTitle').value;
