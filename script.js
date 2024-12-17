@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             await s3.putObject(params).promise();
             const shareableLink = `https://coderpanda11.github.io/newsurvey/surveyDisplay.html?id=${uid}`;
             alert(`Your survey has been created and can be accessed at: ${shareableLink}`);
-            window.location.href = 'surveyDisplay.html'; //Change to sharableLink 
+            window.location.href = shareableLink; //Change to sharableLink 
         } catch (error) {
             console.error('Error uploading survey:', error);
             alert("Error uploading survey");
