@@ -137,9 +137,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     // Add questions
     function addQuestion(questionsArray) {
-        const questionContainer = document.getElementById ("questionContainer");
+        const questionContainer = document.getElementById("questionContainer");
         const addQuestionButton = document.getElementById("addQuestionButton");
-
+    
         const questionTypes = [
             "Short answer",
             "Paragraph",
@@ -154,16 +154,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             "Date",
             "Time"
         ];
-
+    
         const createOptionsContainer = (type) => {
             const optionsContainer = document.createElement("div");
             optionsContainer.classList.add("options-container");
-
+    
             if (type === "Multiple choice" || type === "Checkboxes" || type === "Dropdown") {
                 const addOptionLink = document.createElement("span");
                 addOptionLink.classList.add("add-option");
                 addOptionLink.innerText = "Add option";
-
+    
                 addOptionLink.addEventListener("click", () => {
                     const optionInput = document.createElement("input");
                     optionInput.type = "text";
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     optionInput.style.marginTop = "5px";
                     optionsContainer.appendChild(optionInput);
                 });
-
+    
                 optionsContainer.appendChild(addOptionLink);
             } else if (type === "File upload") {
                 const fileInput = document.createElement("input");
@@ -187,30 +187,30 @@ document.addEventListener("DOMContentLoaded", async () => {
                 input.type = type.toLowerCase();
                 optionsContainer.appendChild(input);
             }
-
+    
             return optionsContainer;
         };
-
+    
         const createQuestionElement = () => {
             const questionDiv = document.createElement("div");
             questionDiv.classList.add("form-group");
-        
+    
             const label = document.createElement("label");
             label.innerText = "Question";
             questionDiv.appendChild(label);
-        
+    
             const input = document.createElement("input");
             input.type = "text";
             input.placeholder = "Enter your question";
             questionDiv.appendChild(input);
-        
+    
             const questionTypeDiv = document.createElement("div");
             questionTypeDiv.classList.add("question-type");
-        
+    
             const questionTypeLabel = document.createElement("span");
             questionTypeLabel.innerText = "Type:";
             questionTypeDiv.appendChild(questionTypeLabel);
-        
+    
             const questionTypeSelect = document.createElement("select");
             questionTypes.forEach(type => {
                 const option = document.createElement("option");
@@ -218,17 +218,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                 option.innerText = type;
                 questionTypeSelect.appendChild(option);
             });
-        
+    
             questionTypeDiv.appendChild(questionTypeSelect);
             questionDiv.appendChild(questionTypeDiv);
-        
-            // Create a question data object when the question is submitted
+    
+            // Create a question data object
             const questionData = {
                 question: "", // Initialize as empty
                 type: questionTypeSelect.value,
                 options: [] // Initialize options array
             };
-
+    
             questionTypeSelect.addEventListener("change", () => {
                 const currentOptionsContainer = questionDiv.querySelector(".options-container");
                 if (currentOptionsContainer) {
@@ -238,13 +238,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 questionDiv.appendChild(newOptionsContainer);
                 questionData.type = questionTypeSelect.value; // Update question type
             });
-
-            // Add the question data to the questionsArray when the question is created
-            const addQuestionToArray = () => {
-                questionData.question = input.value; // Capture the question text
-                questionsArray.push(questionData);
-            };
-
+    
             const removeQuestionLink = document.createElement("span");
             removeQuestionLink.innerText = "Remove question";
             removeQuestionLink.classList.add("remove-question");
@@ -256,19 +250,25 @@ document.addEventListener("DOMContentLoaded", async () => {
                     questionsArray.splice(index, 1);
                 }
             });
-
+    
             questionDiv.appendChild(removeQuestionLink);
-
-            // Call addQuestionToArray when the question is added
-            addQuestionButton.addEventListener("click", addQuestionToArray);
-
+    
+            // Add the question data to the questionsArray when the question is created
+            addQuestionButton.addEventListener("click", () => {
+                questionData.question = input.value; // Capture the question text
+                questionsArray.push(questionData);
+                console.log(questionsArray); // This will help you verify that the questions are being added correctly. You can also clear the input field after adding the question to improve user experience.
+                input.value = ""; // Clear the input field after adding
+            });
+    
+            questionDiv.appendChild(removeQuestionLink);
             return questionDiv;
         };
-
+    
         addQuestionButton.addEventListener("click", () => {
-            const newQuestion = createQuestionElement();
-            questionContainer.appendChild(newQuestion);
-        });    
+            const newQuestionElement = createQuestionElement();
+            questionContainer.appendChild(newQuestionElement);
+        });
     }
 
     async function submitSurvey(questionsArray) {
