@@ -222,6 +222,29 @@ document.addEventListener("DOMContentLoaded", async () => {
             questionTypeDiv.appendChild(questionTypeSelect);
             questionDiv.appendChild(questionTypeDiv);
         
+            // Create a question data object when the question is submitted
+            const questionData = {
+                question: "", // Initialize as empty
+                type: questionTypeSelect.value,
+                options: [] // Initialize options array
+            };
+
+            questionTypeSelect.addEventListener("change", () => {
+                const currentOptionsContainer = questionDiv.querySelector(".options-container");
+                if (currentOptionsContainer) {
+                    questionDiv.removeChild(currentOptionsContainer);
+                }
+                const newOptionsContainer = createOptionsContainer(questionTypeSelect.value);
+                questionDiv.appendChild(newOptionsContainer);
+                questionData.type = questionTypeSelect.value; // Update question type
+            });
+
+            // Add the question data to the questionsArray when the question is created
+            const addQuestionToArray = () => {
+                questionData.question = input.value; // Capture the question text
+                questionsArray.push(questionData);
+            };
+
             const removeQuestionLink = document.createElement("span");
             removeQuestionLink.innerText = "Remove question";
             removeQuestionLink.classList.add("remove-question");
@@ -233,29 +256,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                     questionsArray.splice(index, 1);
                 }
             });
-        
+
             questionDiv.appendChild(removeQuestionLink);
-        
-            // Create a question data object
-            const questionData = {
-                question: input,
-                type: questionTypeSelect.value,
-                options: [] // Initialize options array
-            };
-        
-            questionTypeSelect.addEventListener("change", () => {
-                const currentOptionsContainer = questionDiv.querySelector(".options-container");
-                if (currentOptionsContainer) {
-                    questionDiv.removeChild(currentOptionsContainer);
-                }
-                const newOptionsContainer = createOptionsContainer(questionTypeSelect.value);
-                questionDiv.appendChild(newOptionsContainer);
-                questionData.type = questionTypeSelect.value; // Update question type
-            });
-        
-            // Add the question data to the questionsArray when the question is created
-            questionsArray.push(questionData);
-        
+
+            // Call addQuestionToArray when the question is added
+            addQuestionButton.addEventListener("click", addQuestionToArray);
+
             return questionDiv;
         };
 
