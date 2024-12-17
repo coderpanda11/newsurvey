@@ -194,23 +194,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         const createQuestionElement = () => {
             const questionDiv = document.createElement("div");
             questionDiv.classList.add("form-group");
-
+        
             const label = document.createElement("label");
             label.innerText = "Question";
             questionDiv.appendChild(label);
-
+        
             const input = document.createElement("input");
             input.type = "text";
             input.placeholder = "Enter your question";
             questionDiv.appendChild(input);
-
+        
             const questionTypeDiv = document.createElement("div");
             questionTypeDiv.classList.add("question-type");
-
+        
             const questionTypeLabel = document.createElement("span");
             questionTypeLabel.innerText = "Type:";
             questionTypeDiv.appendChild(questionTypeLabel);
-
+        
             const questionTypeSelect = document.createElement("select");
             questionTypes.forEach(type => {
                 const option = document.createElement("option");
@@ -218,7 +218,31 @@ document.addEventListener("DOMContentLoaded", async () => {
                 option.innerText = type;
                 questionTypeSelect.appendChild(option);
             });
-
+        
+            questionTypeDiv.appendChild(questionTypeSelect);
+            questionDiv.appendChild(questionTypeDiv);
+        
+            const removeQuestionLink = document.createElement("span");
+            removeQuestionLink.innerText = "Remove question";
+            removeQuestionLink.classList.add("remove-question");
+            removeQuestionLink.addEventListener("click", () => {
+                questionContainer.removeChild(questionDiv);
+                // Remove from questionsArray as well
+                const index = questionsArray.indexOf(questionData);
+                if (index > -1) {
+                    questionsArray.splice(index, 1);
+                }
+            });
+        
+            questionDiv.appendChild(removeQuestionLink);
+        
+            // Create a question data object
+            const questionData = {
+                question: input,
+                type: questionTypeSelect.value,
+                options: [] // Initialize options array
+            };
+        
             questionTypeSelect.addEventListener("change", () => {
                 const currentOptionsContainer = questionDiv.querySelector(".options-container");
                 if (currentOptionsContainer) {
@@ -226,20 +250,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
                 const newOptionsContainer = createOptionsContainer(questionTypeSelect.value);
                 questionDiv.appendChild(newOptionsContainer);
+                questionData.type = questionTypeSelect.value; // Update question type
             });
-
-            questionTypeDiv.appendChild(questionTypeSelect);
-            questionDiv.appendChild(questionTypeDiv);
-
-            const removeQuestionLink = document.createElement("span");
-            removeQuestionLink.innerText = "Remove question";
-            removeQuestionLink.classList.add("remove-question");
-            removeQuestionLink.addEventListener("click", () => {
-                questionContainer.removeChild(questionDiv);
-            });
-
-            questionDiv.appendChild(removeQuestionLink);
-
+        
+            // Add the question data to the questionsArray when the question is created
+            questionsArray.push(questionData);
+        
             return questionDiv;
         };
 
