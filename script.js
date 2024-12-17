@@ -266,7 +266,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         questionContainer.appendChild(newQuestionElement);
     }
     
-
+//updated code ends here
+    
     async function submitSurvey(questionsArray) {
         const surveyTitle = document.getElementById('surveyTitle').value;
         const surveyData = { title: surveyTitle, questions: questionsArray };
