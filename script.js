@@ -329,14 +329,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     
         surveyData.questions.forEach((question, index) => {
             const questionElement = document.createElement('div');
-            questionElement.innerHTML = `<h3 id=questionDisplay"><strong>${question.question}</strong></h3>`; // Display the question text
-    
+            questionElement.innerHTML = `<h3><strong>${question.question}</strong></h3>`; // Display the question text
+        
             // Handle different question types
             if (question.type === 'Multiple choice') {
                 question.options.forEach((option, optionIndex) => {
                     const optionElement = document.createElement('div');
                     optionElement.innerHTML = `
-                        <input type="radio" id="choiceDisplay" name="question${index}" id="question${index}option${optionIndex}" value="${option}">
+                        <input type="radio" name="question${index}" id="question${index}option${optionIndex}" value="${option}">
                         <label for="question${index}option${optionIndex}">${option}</label>
                     `;
                     questionElement.appendChild(optionElement);
@@ -345,7 +345,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 question.options.forEach((option, optionIndex) => {
                     const optionElement = document.createElement('div');
                     optionElement.innerHTML = `
-                        <input type="checkbox" id="checkDisplay" name="question${index}option${optionIndex}" id="question${index}option${optionIndex}" value="${option}">
+                        <input type="checkbox" name="question${index}option${optionIndex}" id="question${index}option${optionIndex}" value="${option}">
                         <label for="question${index}option${optionIndex}">${option}</label>
                     `;
                     questionElement.appendChild(optionElement);
@@ -361,49 +361,89 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
                 questionElement.appendChild(selectElement);
             } else if (question.type === 'Short answer') {
-                questionElement.innerHTML += `<input type="text" id="shortDisplay" name="question${index}" placeholder="Your answer">`;
+                questionElement.innerHTML += `<input type="text" name="question${index}" placeholder="Your answer">`;
             } else if (question.type === 'Paragraph') {
-                questionElement.innerHTML += `<textarea id="paraDisplay" name="question${index}" placeholder="Your answer"></textarea>`;
+                questionElement.innerHTML += `<textarea name="question${index}" placeholder="Your answer"></textarea>`;
             } else if (question.type === 'File upload') {
-                questionElement.innerHTML += `<input id="fileDisplay" type="file" name="question${index}">`;
+                questionElement.innerHTML += `<input type="file" name="question${index}">`;
             } else if (question.type === 'Linear scale') {
                 questionElement.innerHTML += `
-                    <label>Minimum value: <input type="number" id="minlinearDisplay" name="question${index}min" min="1" max="10" value="1"></label>
-                    <label>Maximum value: <input type="number" id="maxlinearDisplay" name="question${index}max" min="1" max="10" value="5"></label>
+                    <label>Minimum value: <input type="number" name="question${index}min" min="1" max="10" value="1"></label>
+                    <label>Maximum value: <input type="number" name="question${index}max" min="1" max="10" value="5"></label>
                 `;
             } else if (question.type === 'Rating') {
                 questionElement.innerHTML += `
-                    <label>Rating: <input type="number" id="ratingDisplay" name="question${index}" min="1" max="5" value="3"></label>
+                    <label>Rating: <input type="number" name="question${index}" min="1" max="5" value="3"></label>
                 `;
             } else if (question.type === 'Date') {
-                questionElement.innerHTML += `<input type="date" id="dateDisplay" name="question${index}">`;
+                questionElement.innerHTML += `<input type="date" name="question${index}">`;
             } else if (question.type === 'Time') {
-                questionElement.innerHTML += `<input type="time" id="timeDisplay" name="question${index}">`;
+                questionElement.innerHTML += `<input type="time" name="question${index}">`;
             }
-    
+        
             surveyContent.appendChild(questionElement);
         });
     }
 
     // Response Submission
-    document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
-        const responses = gatherSurveyResponses();
-        
+    document.getElementById('submitButton').addEventListener('click', async () => {
+        const formData = new FormData();
+        const responses = []; // Array to hold responses for CSV conversion
+    
+        surveyData.questions.forEach((question, index) => {
+            let responseValue = '';
+    
+            if (question.type === 'Multiple choice') {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                if (selectedOption) {
+                    responseValue = selectedOption.value;
+                }
+            } else if (question.type === 'Checkboxes') {
+                const checkedOptions = document.querySelectorAll(`input[name^="question${index}option"]`);
+                const checkedValues = [];
+                checkedOptions.forEach((checkbox) => {
+                    if (checkbox.checked) {
+                        checkedValues.push(checkbox.value);
+                    }
+                });
+                responseValue = checkedValues.join(', '); // Join checked values into a single string
+            } else if (question.type === 'Dropdown') {
+                const selectedOption = document.querySelector(`select[name="question${index}"]`);
+                if (selectedOption) {
+                    responseValue = selectedOption.value;
+                }
+            } else {
+                const inputElement = document.querySelector(`input[name="question${index}"], textarea[name="question${index}"]`);
+                if (inputElement) {
+                    responseValue = inputElement.value;
+                }
+            }
+    
+            // Append the response to the FormData and responses array
+            if (responseValue) {
+                formData.append(`question${index}`, responseValue);
+                responses.push({ question: question.question, response: responseValue }); // Store for CSV
+            }
+        });
+    
+        // Check if there are any responses to submit
         if (responses.length === 0) {
             alert('No responses to submit.');
             return;
         }
-
+    
+        // Convert responses to CSV format
         const csvData = convertResponsesToCSV(responses);
         const randomNum = Date.now(); // Using current timestamp as a unique identifier
-
+    
         const params = {
             Bucket: 'pandabucket1337',
             Key: `responses/${randomNum}.csv`,
             Body: new Blob([csvData], { type: 'text/csv' }),
             ContentType: 'text/csv'
         };
-
+    
+        // Attempt to upload the responses to S3
         try {
             await s3.putObject(params).promise();
             alert('Responses submitted successfully!');
