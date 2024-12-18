@@ -128,20 +128,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (surveyForm) {
             const questionsArray = [];
             const addQuestionBtn = document.getElementById('addQuestionButton');
-    
+
             addQuestionBtn.addEventListener('click', () => addQuestion(questionsArray));
-    
+
             surveyForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 await submitSurvey(questionsArray);
             });
         }
     }
-    
+
     // Add questions
     function addQuestion(questionsArray) {
         const questionContainer = document.getElementById("questionContainer");
-    
+
         const questionTypes = [
             "Short answer",
             "Paragraph",
@@ -156,16 +156,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             "Date",
             "Time"
         ];
-    
+
         const createOptionsContainer = (type) => {
             const optionsContainer = document.createElement("div");
             optionsContainer.classList.add("options-container");
-    
+
             if (type === "Multiple choice" || type === "Checkboxes" || type === "Dropdown") {
                 const addOptionLink = document.createElement("span");
                 addOptionLink.classList.add("add-option");
                 addOptionLink.innerText = "Add option";
-    
+
                 addOptionLink.addEventListener("click", () => {
                     const optionInput = document.createElement("input");
                     optionInput.type = "text";
@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     optionInput.style.marginTop = "5px";
                     optionsContainer.appendChild(optionInput);
                 });
-    
+
                 optionsContainer.appendChild(addOptionLink);
             } else if (type === "File upload") {
                 const fileInput = document.createElement("input");
@@ -189,30 +189,30 @@ document.addEventListener("DOMContentLoaded", async () => {
                 input.type = type.toLowerCase();
                 optionsContainer.appendChild(input);
             }
-    
+
             return optionsContainer;
         };
-    
+
         const createQuestionElement = () => {
             const questionDiv = document.createElement("div");
             questionDiv.classList.add("form-group");
-    
+
             const label = document.createElement("label");
             label.innerText = "Question";
             questionDiv.appendChild(label);
-    
+
             const input = document.createElement("input");
             input.type = "text";
             input.placeholder = "Enter your question";
             questionDiv.appendChild(input);
-    
+
             const questionTypeDiv = document.createElement("div");
             questionTypeDiv.classList.add("question-type");
-    
+
             const questionTypeLabel = document.createElement("span");
             questionTypeLabel.innerText = "Type:";
             questionTypeDiv.appendChild(questionTypeLabel);
-    
+
             const questionTypeSelect = document.createElement("select");
             questionTypes.forEach(type => {
                 const option = document.createElement("option");
@@ -220,22 +220,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                 option.innerText = type;
                 questionTypeSelect.appendChild(option);
             });
-    
+
             questionTypeDiv.appendChild(questionTypeSelect);
             questionDiv.appendChild(questionTypeDiv);
-    
+
             // Create a question data object
             const questionData = {
                 question: "", // Initialize as empty
                 type: questionTypeSelect.value,
                 options: [] // Initialize options array
             };
-    
+
             // Update questionData when the input changes
             input.addEventListener("input", () => {
                 questionData.question = input.value; // Capture the question text
             });
-    
+
             questionTypeSelect.addEventListener("change", () => {
                 const currentOptionsContainer = questionDiv.querySelector(".options-container");
                 if (currentOptionsContainer) {
@@ -245,33 +245,32 @@ document.addEventListener("DOMContentLoaded", async () => {
                 questionDiv.appendChild(newOptionsContainer);
                 questionData.type = questionTypeSelect.value; // Update question type
             });
-    
+
             const removeQuestionLink = document.createElement("span");
             removeQuestionLink.innerText = "Remove question";
             removeQuestionLink.classList.add("remove-question");
             removeQuestionLink.addEventListener("click", () => {
                 questionContainer.removeChild(questionDiv);
                 // Remove from questionsArray as well
-     const index = questionsArray.indexOf(questionData);
+                const index = questionsArray.indexOf(questionData);
                 if (index > -1) {
                     questionsArray.splice(index, 1);
                 }
             });
-    
+
             questionDiv.appendChild(removeQuestionLink);
             questionDiv.appendChild(createOptionsContainer(questionData.type));
             questionContainer.appendChild(questionDiv);
-    
-            // Push questionData to questionsArray only when the survey is submitted
-            // This should be handled in the survey submission function
+
+            // Push questionData to questionsArray immediately after creating the question
+            questionsArray.push(questionData);
         };
-    
+
         // Call createQuestionElement to add a new question
         createQuestionElement();
     }
-    
-//updated code ends here
-    
+
+    // Survey submission function
     async function submitSurvey(questionsArray) {
         const surveyTitle = document.getElementById('surveyTitle').value;
         const surveyData = { title: surveyTitle, questions: questionsArray };
@@ -288,7 +287,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             await s3.putObject(params).promise();
             const shareableLink = `https://coderpanda11.github.io/newsurvey/surveyDisplay.html?id=${uid}`;
             alert(`Your survey has been created and can be accessed at: ${shareableLink}`);
-            window.location.href = shareableLink; //Change to sharableLink 
+            window.location.href = shareableLink; // Change to sharableLink 
         } catch (error) {
             console.error('Error uploading survey:', error);
             alert("Error uploading survey");
