@@ -249,41 +249,30 @@ document.addEventListener("DOMContentLoaded", async () => {
                 questionDiv.appendChild(newOptionsContainer);
                 questionData.type = questionTypeSelect.value; // Update question type
 
-                const removeQuestionLink = document.createElement("span");
-                removeQuestionLink.innerText="Remove question";
-                removeQuestionLink.classList.add("remove-question");
-                removeQuestionLink.addEventListener("click",() => {
-                    questionContainer.removeChild(questionDiv);
-                    const index = questionsArray.indexOf(questionData);
-                    if (index > -1) {
-                        questionsArray.splice(index, 1);
-                    }
-                });
-
-                questionDiv.appendChild(removeQuestionLink);
-                questionDiv.appendChild(createOptionsContainer(questionData.type, questionData));
-                questionContainer.appendChild(questionDiv);
-                questionsArray.push(questionData);
+                // questionDiv.appendChild(removeQuestionLink);
+                // questionDiv.appendChild(createOptionsContainer(questionData.type, questionData));
+                // questionContainer.appendChild(questionDiv);
+                
             });
 
-            // const removeQuestionLink = document.createElement("span");
-            // removeQuestionLink.innerText = "Remove question";
-            // removeQuestionLink.classList.add("remove-question");
-            // removeQuestionLink.addEventListener("click", () => {
-            //     questionContainer.removeChild(questionDiv);
-            //     // Remove from questionsArray as well
-            //     const index = questionsArray.indexOf(questionData);
-            //     if (index > -1) {
-            //         questionsArray.splice(index, 1);
-            //     }
-            // });
+            const removeQuestionLink = document.createElement("span");
+            removeQuestionLink.innerText = "Remove question";
+            removeQuestionLink.classList.add("remove-question");
+            removeQuestionLink.addEventListener("click", () => {
+                questionContainer.removeChild(questionDiv);
+                // Remove from questionsArray as well
+                const index = questionsArray.indexOf(questionData);
+                if (index > -1) {
+                    questionsArray.splice(index, 1);
+                }
+            });
 
-            // // questionDiv.appendChild(removeQuestionLink);
-            // // questionDiv.appendChild(createOptionsContainer(questionData.type, questionData));
-            // // questionContainer.appendChild(questionDiv);
+            questionDiv.appendChild(removeQuestionLink);
+            questionDiv.appendChild(createOptionsContainer(questionData.type, questionData));
+            questionContainer.appendChild(questionDiv);
 
-            // // // Push questionData to questionsArray immediately after creating the question
-            // // questionsArray.push(questionData);
+            // Push questionData to questionsArray immediately after creating the question
+            questionsArray.push(questionData);
         };
 
         // Call createQuestionElement to add a new question
