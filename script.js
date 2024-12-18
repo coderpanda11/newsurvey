@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             "Time"
         ];
 
-        const createOptionsContainer = (type) => {
+        const createOptionsContainer = (type, questionData) => {
             const optionsContainer = document.createElement("div");
             optionsContainer.classList.add("options-container");
 
@@ -170,8 +170,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const optionInput = document.createElement("input");
                     optionInput.type = "text";
                     optionInput.placeholder = "Option";
-                    optionInput.style.marginTop = "5px";
+                    optionInput.style.marginTop = "10px";
                     optionsContainer.appendChild(optionInput);
+
+                    optionInput.addEventListener("input", () => {
+                        questionData.options.push(optionInput.value);
+                    });
                 });
 
                 optionsContainer.appendChild(addOptionLink);
@@ -241,29 +245,45 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (currentOptionsContainer) {
                     questionDiv.removeChild(currentOptionsContainer);
                 }
-                const newOptionsContainer = createOptionsContainer(questionTypeSelect.value);
+                const newOptionsContainer = createOptionsContainer(questionData.type, questionData);
                 questionDiv.appendChild(newOptionsContainer);
                 questionData.type = questionTypeSelect.value; // Update question type
+
+                const removeQuestionLink = document.createElement("span");
+                removeQuestionLink.innerText="Remove question";
+                removeQuestionLink.classList.add("remove-question");
+                removeQuestionLink.addEventListener("click",() => {
+                    questionContainer.removeChild(questionDiv);
+                    const index = questionsArray.indexOf(questionData);
+                    if (index > -1) {
+                        questionsArray.splice(index, 1);
+                    }
+                });
+
+                questionDiv.appendChild(removeQuestionLink);
+                questionDiv.appendChild(createOptionsContainer(questionData.type, questionData));
+                questionContainer.appendChild(questionDiv);
+                questionsArray.push(questionData);
             });
 
-            const removeQuestionLink = document.createElement("span");
-            removeQuestionLink.innerText = "Remove question";
-            removeQuestionLink.classList.add("remove-question");
-            removeQuestionLink.addEventListener("click", () => {
-                questionContainer.removeChild(questionDiv);
-                // Remove from questionsArray as well
-                const index = questionsArray.indexOf(questionData);
-                if (index > -1) {
-                    questionsArray.splice(index, 1);
-                }
-            });
+            // const removeQuestionLink = document.createElement("span");
+            // removeQuestionLink.innerText = "Remove question";
+            // removeQuestionLink.classList.add("remove-question");
+            // removeQuestionLink.addEventListener("click", () => {
+            //     questionContainer.removeChild(questionDiv);
+            //     // Remove from questionsArray as well
+            //     const index = questionsArray.indexOf(questionData);
+            //     if (index > -1) {
+            //         questionsArray.splice(index, 1);
+            //     }
+            // });
 
-            questionDiv.appendChild(removeQuestionLink);
-            questionDiv.appendChild(createOptionsContainer(questionData.type));
-            questionContainer.appendChild(questionDiv);
+            // // questionDiv.appendChild(removeQuestionLink);
+            // // questionDiv.appendChild(createOptionsContainer(questionData.type, questionData));
+            // // questionContainer.appendChild(questionDiv);
 
-            // Push questionData to questionsArray immediately after creating the question
-            questionsArray.push(questionData);
+            // // // Push questionData to questionsArray immediately after creating the question
+            // // questionsArray.push(questionData);
         };
 
         // Call createQuestionElement to add a new question
