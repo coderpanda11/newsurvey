@@ -172,10 +172,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     optionInput.placeholder = "Option";
                     optionInput.style.marginTop = "10px";
                     optionsContainer.appendChild(optionInput);
-
-                    optionInput.addEventListener("input", () => {
-                        questionData.options.push(optionInput.value);
-                    });
                 });
 
                 optionsContainer.appendChild(addOptionLink);
@@ -245,14 +241,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (currentOptionsContainer) {
                     questionDiv.removeChild(currentOptionsContainer);
                 }
-                const newOptionsContainer = createOptionsContainer(questionData.type, questionData);
+                const newOptionsContainer = createOptionsContainer(questionTypeSelect.value);
                 questionDiv.appendChild(newOptionsContainer);
                 questionData.type = questionTypeSelect.value; // Update question type
-
-                // questionDiv.appendChild(removeQuestionLink);
-                // questionDiv.appendChild(createOptionsContainer(questionData.type, questionData));
-                // questionContainer.appendChild(questionDiv);
-                
             });
 
             const removeQuestionLink = document.createElement("span");
@@ -268,7 +259,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
 
             questionDiv.appendChild(removeQuestionLink);
-            questionDiv.appendChild(createOptionsContainer(questionData.type, questionData));
+            questionDiv.appendChild(createOptionsContainer(questionData.type));
             questionContainer.appendChild(questionDiv);
 
             // Push questionData to questionsArray immediately after creating the question
