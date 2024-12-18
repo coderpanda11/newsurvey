@@ -325,18 +325,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function displaySurvey(surveyData) {
         const surveyContent = document.getElementById('surveyContent');
-        surveyContent.innerHTML = `<h2>${surveyData.title}</h2>`; // Display the survey title
+        surveyContent.innerHTML = `<h2 id="titleDisplay">${surveyData.title}</h2>`; // Display the survey title
     
         surveyData.questions.forEach((question, index) => {
             const questionElement = document.createElement('div');
-            questionElement.innerHTML = `<strong>${question.question}</strong>`; // Display the question text
+            questionElement.innerHTML = `<h3 id=questionDisplay"><strong>${question.question}</strong></h3>`; // Display the question text
     
             // Handle different question types
             if (question.type === 'Multiple choice') {
                 question.options.forEach((option, optionIndex) => {
                     const optionElement = document.createElement('div');
                     optionElement.innerHTML = `
-                        <input type="radio" name="question${index}" id="question${index}option${optionIndex}" value="${option}">
+                        <input type="radio" id="choiceDisplay" name="question${index}" id="question${index}option${optionIndex}" value="${option}">
                         <label for="question${index}option${optionIndex}">${option}</label>
                     `;
                     questionElement.appendChild(optionElement);
@@ -345,7 +345,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 question.options.forEach((option, optionIndex) => {
                     const optionElement = document.createElement('div');
                     optionElement.innerHTML = `
-                        <input type="checkbox" name="question${index}option${optionIndex}" id="question${index}option${optionIndex}" value="${option}">
+                        <input type="checkbox" id="checkDisplay" name="question${index}option${optionIndex}" id="question${index}option${optionIndex}" value="${option}">
                         <label for="question${index}option${optionIndex}">${option}</label>
                     `;
                     questionElement.appendChild(optionElement);
@@ -361,24 +361,24 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
                 questionElement.appendChild(selectElement);
             } else if (question.type === 'Short answer') {
-                questionElement.innerHTML += `<input type="text" name="question${index}" placeholder="Your answer">`;
+                questionElement.innerHTML += `<input type="text" id="shortDisplay" name="question${index}" placeholder="Your answer">`;
             } else if (question.type === 'Paragraph') {
-                questionElement.innerHTML += `<textarea name="question${index}" placeholder="Your answer"></textarea>`;
+                questionElement.innerHTML += `<textarea id="paraDisplay" name="question${index}" placeholder="Your answer"></textarea>`;
             } else if (question.type === 'File upload') {
-                questionElement.innerHTML += `<input type="file" name="question${index}">`;
+                questionElement.innerHTML += `<input id="fileDisplay" type="file" name="question${index}">`;
             } else if (question.type === 'Linear scale') {
                 questionElement.innerHTML += `
-                    <label>Minimum value: <input type="number" name="question${index}min" min="1" max="10" value="1"></label>
-                    <label>Maximum value: <input type="number" name="question${index}max" min="1" max="10" value="5"></label>
+                    <label>Minimum value: <input type="number" id="minlinearDisplay" name="question${index}min" min="1" max="10" value="1"></label>
+                    <label>Maximum value: <input type="number" id="maxlinearDisplay" name="question${index}max" min="1" max="10" value="5"></label>
                 `;
             } else if (question.type === 'Rating') {
                 questionElement.innerHTML += `
-                    <label>Rating: <input type="number" name="question${index}" min="1" max="5" value="3"></label>
+                    <label>Rating: <input type="number" id="ratingDisplay" name="question${index}" min="1" max="5" value="3"></label>
                 `;
             } else if (question.type === 'Date') {
-                questionElement.innerHTML += `<input type="date" name="question${index}">`;
+                questionElement.innerHTML += `<input type="date" id="dateDisplay" name="question${index}">`;
             } else if (question.type === 'Time') {
-                questionElement.innerHTML += `<input type="time" name="question${index}">`;
+                questionElement.innerHTML += `<input type="time" id="timeDisplay" name="question${index}">`;
             }
     
             surveyContent.appendChild(questionElement);
