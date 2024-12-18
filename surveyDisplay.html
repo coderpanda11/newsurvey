@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Survey</title>
-    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1340.0.min.js"></script> 
-    <script src="script.js" defer></script>
+    <link href='https://fonts.googleapis.com/css?family=Nunito:400,300' rel='stylesheet' type='text/css'>
     <style>
         *, *:before, *:after {
             box-sizing: border-box;
@@ -16,11 +15,11 @@
             color: #384047;
             margin: 0;
             padding: 0;
-            background-color: #f3f2f0;
+            background-color: #ffffff;
         }
 
         header {
-            background-color: #000102;
+            background-color: #588cf6;
             padding: 20px;
             text-align: center;
             color: #ffffff;
@@ -29,7 +28,8 @@
 
         header h1 {
             margin: 0;
-            font-size: 2em;
+            font-size: 2.5em;
+            text-decoration: underline;
         }
 
         nav {
@@ -49,24 +49,18 @@
         }
 
         main {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             max-width: 600px;
-            margin: auto;
-            height: calc(97vh - 120px); /* Adjusts for the header and footer height */
-            background: #ffffff;
+            margin: 20px auto;
+            background: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
+        }
 
         button {
-            width: 60%;
+            width: 100%;
             padding: 15px;
-            background-color: #24caeb;
+            background-color: #24eb7d;
             border: none;
             color: #fff;
             font-size: 16px;
@@ -76,21 +70,14 @@
         }
 
         button:hover {
-            background-color: #00d9ff;
+            background-color: #6fff00;
         }
 
         footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
             text-align: center;
-            margin: 0;
-            padding: 10px 0;
-            background-color: #060606;
-            color: #f4efef;
-            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
-}
-
+            margin: 20px 0;
+            color: #000000;
+        }
 
         h2 {
             text-align: center;
@@ -123,32 +110,26 @@
         #surveyContent ul {
             padding-left: 20px;
         }
-        .p3 {
-            font-family: 'Quicksand', sans-serif;
-        }
-    </style> 
+    </style>
 </head>
 <body>
     <header>
         <h1>Your Survey</h1>
         <nav>
-            <a href="dashboard.html">Dashboard</a>
+            <a href="dashboardCreator.html">Dashboard</a>
             <a href="logout.html">Logout</a>
         </nav>
     </header>
     
     <main>
         <div id="surveyContent"></div>
-        <button id="submitButton">Submit Responses</button>
+        <button id="submitSurveyBtn">Submit Survey</button>
     </main>
 
     <footer>
         <p>&copy; 2023 Your Company Name. All rights reserved.</p>
     </footer>
 
-    
-
-    <!-- new addition starts here -->
     <script>
         const surveyData = JSON.parse(localStorage.getItem('createdSurvey'));
         const surveyContent = document.getElementById('surveyContent');
@@ -190,7 +171,5 @@
             alert('Thank you for submitting the survey!');
         });
     </script>
-    <!-- new addition ends here -->
-
 </body>
 </html>
