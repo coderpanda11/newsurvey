@@ -194,14 +194,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
     
         const createQuestionElement = () => {
-
-            // Create a question data object
-            const questionData = {
-                question: "", // Initialize as empty
-                type: questionTypeSelect.value,
-                options: [] // Initialize options array
-            };
-            
             const questionDiv = document.createElement("div");
             questionDiv.classList.add("form-group");
     
@@ -232,7 +224,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             questionTypeDiv.appendChild(questionTypeSelect);
             questionDiv.appendChild(questionTypeDiv);
     
-            
+            // Create a question data object
+            const questionData = {
+                question: "", // Initialize as empty
+                type: questionTypeSelect.value,
+                options: [] // Initialize options array
+            };
     
             questionTypeSelect.addEventListener("change", () => {
                 const currentOptionsContainer = questionDiv.querySelector(".options-container");
