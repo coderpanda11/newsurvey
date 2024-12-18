@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Survey</title>
-    <link href='https://fonts.googleapis.com/css?family=Nunito:400,300' rel='stylesheet' type='text/css'>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1340.0.min.js"></script> 
+    <script src="script.js" defer></script>
     <style>
         *, *:before, *:after {
             box-sizing: border-box;
@@ -15,11 +16,11 @@
             color: #384047;
             margin: 0;
             padding: 0;
-            background-color: #ffffff;
+            background-color: #f3f2f0;
         }
 
         header {
-            background-color: #588cf6;
+            background-color: #000102;
             padding: 20px;
             text-align: center;
             color: #ffffff;
@@ -28,8 +29,7 @@
 
         header h1 {
             margin: 0;
-            font-size: 2.5em;
-            text-decoration: underline;
+            font-size: 2em;
         }
 
         nav {
@@ -49,18 +49,24 @@
         }
 
         main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             max-width: 600px;
-            margin: 20px auto;
-            background: #fff;
+            margin: auto;
+            height: calc(97vh - 120px); /* Adjusts for the header and footer height */
+            background: #ffffff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+}
+
 
         button {
-            width: 100%;
+            width: 60%;
             padding: 15px;
-            background-color: #24eb7d;
+            background-color: #24caeb;
             border: none;
             color: #fff;
             font-size: 16px;
@@ -70,14 +76,21 @@
         }
 
         button:hover {
-            background-color: #6fff00;
+            background-color: #00d9ff;
         }
 
         footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
             text-align: center;
-            margin: 20px 0;
-            color: #000000;
-        }
+            margin: 0;
+            padding: 10px 0;
+            background-color: #060606;
+            color: #f4efef;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+}
+
 
         h2 {
             text-align: center;
@@ -110,13 +123,16 @@
         #surveyContent ul {
             padding-left: 20px;
         }
-    </style>
+        .p3 {
+            font-family: 'Quicksand', sans-serif;
+        }
+    </style> 
 </head>
 <body>
     <header>
         <h1>Your Survey</h1>
         <nav>
-            <a href="dashboardCreator.html">Dashboard</a>
+            <a href="dashboard.html">Dashboard</a>
             <a href="logout.html">Logout</a>
         </nav>
     </header>
@@ -129,5 +145,6 @@
     <footer>
         <p>&copy; 2023 Your Company Name. All rights reserved.</p>
     </footer>
+    
 </body>
 </html>
