@@ -231,6 +231,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 options: [] // Initialize options array
             };
     
+            // Update questionData when the input changes
+            input.addEventListener("input", () => {
+                questionData.question = input.value; // Capture the question text
+            });
+    
             questionTypeSelect.addEventListener("change", () => {
                 const currentOptionsContainer = questionDiv.querySelector(".options-container");
                 if (currentOptionsContainer) {
@@ -247,22 +252,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             removeQuestionLink.addEventListener("click", () => {
                 questionContainer.removeChild(questionDiv);
                 // Remove from questionsArray as well
-                const index = questionsArray.indexOf(questionData);
+     const index = questionsArray.indexOf(questionData);
                 if (index > -1) {
                     questionsArray.splice(index, 1);
                 }
             });
     
-     questionDiv.appendChild(removeQuestionLink);
-    
-            // Update questionData when the input changes
-            input.addEventListener("input", () => {
-                questionData.question = input.value; // Capture the question text
-            });
-    
+            questionDiv.appendChild(removeQuestionLink);
             questionDiv.appendChild(createOptionsContainer(questionData.type));
             questionContainer.appendChild(questionDiv);
-            questionsArray.push(questionData); // Add the question data to the array
+    
+            // Push questionData to questionsArray only when the survey is submitted
+            // This should be handled in the survey submission function
         };
     
         // Call createQuestionElement to add a new question
