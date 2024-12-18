@@ -338,9 +338,45 @@ document.addEventListener("DOMContentLoaded", async () => {
                     `;
                     questionElement.appendChild(optionElement);
                 });
+            } else if (question.type === 'Checkboxes') {
+                question.options.forEach((option, optionIndex) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.innerHTML = `
+                        <input type="checkbox" name="question${index}option${optionIndex}" id="question${index}option${optionIndex}" value="${option}">
+                        <label for="question${index}option${optionIndex}">${option}</label>
+                    `;
+                    questionElement.appendChild(optionElement);
+                });
+            } else if (question.type === 'Dropdown') {
+                const selectElement = document.createElement('select');
+                selectElement.name = `question${index}`;
+                question.options.forEach((option) => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = option;
+                    selectElement.appendChild(optionElement);
+                });
+                questionElement.appendChild(selectElement);
             } else if (question.type === 'Short answer') {
                 questionElement.innerHTML += `<input type="text" name="question${index}" placeholder="Your answer">`;
-            } // Add more question types as needed
+            } else if (question.type === 'Paragraph') {
+                questionElement.innerHTML += `<textarea name="question${index}" placeholder="Your answer"></textarea>`;
+            } else if (question.type === 'File upload') {
+                questionElement.innerHTML += `<input type="file" name="question${index}">`;
+            } else if (question.type === 'Linear scale') {
+                questionElement.innerHTML += `
+                    <label>Minimum value: <input type="number" name="question${index}min" min="1" max="10" value="1"></label>
+                    <label>Maximum value: <input type="number" name="question${index}max" min="1" max="10" value="5"></label>
+                `;
+            } else if (question.type === 'Rating') {
+                questionElement.innerHTML += `
+                    <label>Rating: <input type="number" name="question${index}" min="1" max="5" value="3"></label>
+                `;
+            } else if (question.type === 'Date') {
+                questionElement.innerHTML += `<input type="date" name="question${index}">`;
+            } else if (question.type === 'Time') {
+                questionElement.innerHTML += `<input type="time" name="question${index}">`;
+            }
     
             surveyContent.appendChild(questionElement);
         });
