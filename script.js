@@ -253,17 +253,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             });
     
-            questionDiv.appendChild(removeQuestionLink);
+     questionDiv.appendChild(removeQuestionLink);
     
-            // Add the question data to the questionsArray when the question is created
-            questionData.question = input.value; // Capture the question text
-            questionsArray.push(questionData);
+            // Update questionData when the input changes
+            input.addEventListener("input", () => {
+                questionData.question = input.value; // Capture the question text
+            });
     
-            return questionDiv;
+            questionDiv.appendChild(createOptionsContainer(questionData.type));
+            questionContainer.appendChild(questionDiv);
+            questionsArray.push(questionData); // Add the question data to the array
         };
     
-        const newQuestionElement = createQuestionElement();
-        questionContainer.appendChild(newQuestionElement);
+        // Call createQuestionElement to add a new question
+        createQuestionElement();
     }
     
 //updated code ends here
