@@ -453,22 +453,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         return urlParams.get('id'); // Assuming the survey ID is passed as a query parameter
     }
 
-    // function gatherSurveyResponses() {
-    //     const responses = [];
-    //     const surveyData = JSON.parse(localStorage.getItem('surveyData')); // Assuming survey data is stored in local storage
+    function gatherSurveyResponses() {
+        const responses = [];
+        const surveyData = JSON.parse(localStorage.getItem('surveyData')); // Assuming survey data is stored in local storage
 
-    //     surveyData.questions.forEach((question, index) => {
-    //         const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
-    //                        document.querySelector(`input[name="question${index}"]`) || 
-    //                        document.querySelector(`select[name="question${index}"]`);
-    //         responses.push({
-    //             question: question.question,
-    //             answer: answer ? answer.value : 'No answer provided'
-    //         });
-    //     });
+        surveyData.questions.forEach((question, index) => {
+            const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
+                           document.querySelector(`input[name="question${index}"]`) || 
+                           document.querySelector(`select[name="question${index}"]`);
+            responses.push({
+                question: question.question,
+                answer: answer ? answer.value : 'No answer provided'
+            });
+        });
 
-    //     return responses;
-    // }
+        return responses;
+    }
 
     function convertResponsesToCSV(responses) {
         return responses.map(r => `${r.question},"${r.answer}"`).join('\n');
