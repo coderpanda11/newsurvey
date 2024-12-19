@@ -1,4 +1,3 @@
-let surveyData;
 document.addEventListener("DOMContentLoaded", async () => {
     const AWS_CONFIG = {
         accessKeyId: 'AKIARHJJM2QJME3ADS53', // Replace with your Access Key ID
@@ -18,7 +17,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     initSurveyCreation();
     initFeedbackForms();
     await loadSurvey();
-    initResponseSubmission();
 
     function initRegistration() {
         const registrationForm = document.getElementById('registrationForm');
