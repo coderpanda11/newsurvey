@@ -416,7 +416,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function fetchSurveyData(surveyId) {
         const params = {
-            Bucket: 'your-bucket-name', // Replace with your bucket name
+            Bucket: 'pandabucket1337', // Replace with your bucket name
             Key: `surveys/${surveyId}.json` // Adjust the key based on your S3 structure
         };
     
