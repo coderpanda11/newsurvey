@@ -298,6 +298,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         return `${Math.floor(Math.random() * 10000)}`; // Generate a random number
     }
 
+    let surveyData;
+
     async function loadSurvey() {
         const urlParams = new URLSearchParams(window.location.search);
         const surveyKey = urlParams.get('id');
@@ -314,7 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         try {
             const data = await s3.getObject(params).promise();
-            const surveyData = JSON.parse(data.Body.toString('utf-8'));
+            surveyData = JSON.parse(data.Body.toString('utf-8'));
             // localStorage.setItem('surveyData', JSON.stringify(surveyData));
             displaySurvey(surveyData);
         } catch (error) {
