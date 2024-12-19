@@ -139,42 +139,11 @@
     
     <main>
         <div id="surveyContent"></div>
-        <button id="submitSurveyBtn">Submit Survey</button>
+        <button id="submitButton">Submit Responses</button>
     </main>
-
-    <script>
-        document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
-        const responses = gatherSurveyResponses(); 
-
-        if (responses.length === 0) {
-            alert('No responses to submit.');
-            return;
-        }
-
-        const csvData = convertResponsesToCSV(responses);
-        const randomNum = Date.now(); // Using current timestamp as a unique identifier
-
-        const params = {
-            Bucket: 'pandabucket1337',
-            Key: `responses/${randomNum}.csv`,
-            Body: new Blob([csvData], { type: 'text/csv' }),
-            ContentType: 'text/csv'
-        };
-
-        try {
-            await s3.putObject(params).promise();
-            alert('Responses submitted successfully!');
-        } catch (error) {
-            console.error('Error uploading responses:', error);
-            alert("Error submitting responses");
-        }
-    
-    });
-    </script>
 
     <footer>
         <p>&copy; 2023 Your Company Name. All rights reserved.</p>
     </footer>
-    
 </body>
 </html>
