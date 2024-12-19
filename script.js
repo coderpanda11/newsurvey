@@ -387,88 +387,88 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Response Submission
     document.getElementById('submitButton').addEventListener('click', async () => {
-        const formData = new FormData();
-        const responses = []; // Array to hold responses for CSV conversion
-    
-        surveyData.questions.forEach((question, index) => {
-            let responseValue = '';
-    
-            if (question.type === 'Multiple choice') {
-                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
-                if (selectedOption) {
-                    responseValue = selectedOption.value;
-                }
-            } else if (question.type === 'Checkboxes') {
-                const checkedOptions = document.querySelectorAll(`input[name^="question${index}option"]`);
-                const checkedValues = [];
-                checkedOptions.forEach((checkbox) => {
-                    if (checkbox.checked) {
-                        checkedValues.push(checkbox.value);
-                    }
-                });
-                responseValue = checkedValues.join(', '); // Join checked values into a single string
-            } else if (question.type === 'Dropdown') {
-                const selectedOption = document.querySelector(`select[name="question${index}"]`);
-                if (selectedOption) {
-                    responseValue = selectedOption.value;
-                }
-            } else {
-                const inputElement = document.querySelector(`input[name="question${index}"], textarea[name="question${index}"]`);
-                if (inputElement) {
-                    responseValue = inputElement.value;
-                }
-            }
-    
-            // Append the response to the FormData and responses array
-            if (responseValue) {
-                formData.append(`question${index}`, responseValue);
-                responses.push({ question: question.question, response: responseValue }); // Store for CSV
-            }
-        });
-    
-        // Check if there are any responses to submit
-        if (responses.length === 0) {
-            alert('No responses to submit.');
-            return;
-        }
-    
-        // Convert responses to CSV format
-        const csvData = convertResponsesToCSV(responses);
-        const randomNum = Date.now(); // Using current timestamp as a unique identifier
-    
-        const params = {
-            Bucket: 'pandabucket1337',
-            Key: `responses/${randomNum}.csv`,
-            Body: new Blob([csvData], { type: 'text/csv' }),
-            ContentType: 'text/csv'
-        };
-    
-        // Attempt to upload the responses to S3
         try {
-            await s3.putObject(params).promise();
+            const responses = gatherResponses();
+            
+            // Check if there are any responses to submit
+            if (responses.length === 0) {
+                alert('No responses to submit.');
+                return;
+            }
+
+            // Convert responses to CSV format
+            const csvData = convertResponsesToCSV(responses);
+            const surveyId = getSurveyIdFromURL(); // Function to get the survey ID from the URL
+            const randomNum = Date.now(); // Using current timestamp as a unique identifier
+
+            await uploadResponsesToS3(csvData, surveyId, randomNum);
             alert('Responses submitted successfully!');
         } catch (error) {
-            console.error('Error uploading responses:', error);
-            alert('There was an error submitting your responses.');
+            console.error('Error during submission:', error);
+            alert('There was an error submitting your responses: ' + error.message);
         }
     });
 
-    function gatherSurveyResponses() {
+    function gatherResponses() {
         const responses = [];
-        const surveyData = JSON.parse(localStorage.getItem('surveyData')); // Assuming survey data is stored in local storage
-
         surveyData.questions.forEach((question, index) => {
-            const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
-                           document.querySelector(`input[name="question${index}"]`) || 
-                           document.querySelector(`select[name="question${index}"]`);
-            responses.push({
-                question: question.question,
-                answer: answer ? answer.value : 'No answer provided'
-            });
+            const responseValue = getResponseValue(question, index);
+            if (responseValue) {
+                responses.push({ question: question.question, response: responseValue });
+            }
         });
-
         return responses;
     }
+
+    function getResponseValue(question, index) {
+        let responseValue = '';
+        if (question.type === 'Multiple choice') {
+            const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+            responseValue = selectedOption ? selectedOption.value : '';
+        } else if (question.type === 'Checkboxes') {
+            const checkedOptions = document.querySelectorAll(`input[name^="question${index}option"]:checked`);
+            responseValue = Array.from(checkedOptions).map(checkbox => checkbox.value).join(', ');
+        } else if (question.type === 'Dropdown') {
+            const selectedOption = document.querySelector(`select[name="question${index}"]`);
+            responseValue = selectedOption ? selectedOption.value : '';
+        } else {
+            const inputElement = document.querySelector(`input[name="question${index}"], textarea[name="question${index}"]`);
+            responseValue = inputElement ? inputElement.value : '';
+        }
+        return responseValue;
+    }
+
+    async function uploadResponsesToS3(csvData, surveyId, randomNum) {
+        const params = {
+            Bucket: 'pandabucket1337',
+            Key: `responses/${surveyId}/response_${randomNum}.csv`, // Store under the survey ID folder
+            Body: new Blob([csvData], { type: 'text/csv' }),
+            ContentType: 'text/csv'
+        };
+        await s3.putObject(params).promise();
+    }
+
+    function getSurveyIdFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id'); // Assuming the survey ID is passed as a query parameter
+    }
+
+    // function gatherSurveyResponses() {
+    //     const responses = [];
+    //     const surveyData = JSON.parse(localStorage.getItem('surveyData')); // Assuming survey data is stored in local storage
+
+    //     surveyData.questions.forEach((question, index) => {
+    //         const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
+    //                        document.querySelector(`input[name="question${index}"]`) || 
+    //                        document.querySelector(`select[name="question${index}"]`);
+    //         responses.push({
+    //             question: question.question,
+    //             answer: answer ? answer.value : 'No answer provided'
+    //         });
+    //     });
+
+    //     return responses;
+    // }
 
     function convertResponsesToCSV(responses) {
         return responses.map(r => `${r.question},"${r.answer}"`).join('\n');
