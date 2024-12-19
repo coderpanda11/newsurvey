@@ -386,64 +386,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Response Submission
-    document.getElementById('submitButton').addEventListener('click', async () => {
-        const formData = new FormData();
-        const responses = []; // Array to hold responses for CSV conversion
-    
-        surveyData.questions.forEach((question, index) => {
-            let responseValue = '';
-    
-            if (question.type === 'Multiple choice') {
-                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
-                if (selectedOption) {
-                    responseValue = selectedOption.value;
-                }
-            } else if (question.type === 'Checkboxes') {
-                const checkedOptions = document.querySelectorAll(`input[name^="question${index}option"]`);
-                const checkedValues = [];
-                checkedOptions.forEach((checkbox) => {
-                    if (checkbox.checked) {
-                        checkedValues.push(checkbox.value);
-                    }
-                });
-                responseValue = checkedValues.join(', '); // Join checked values into a single string
-            } else if (question.type === 'Dropdown') {
-                const selectedOption = document.querySelector(`select[name="question${index}"]`);
-                if (selectedOption) {
-                    responseValue = selectedOption.value;
-                }
-            } else {
-                const inputElement = document.querySelector(`input[name="question${index}"], textarea[name="question${index}"]`);
-                if (inputElement) {
-                    responseValue = inputElement.value;
-                }
-            }
-    
-            // Append the response to the FormData and responses array
-            if (responseValue) {
-                formData.append(`question${index}`, responseValue);
-                responses.push({ question: question.question, response: responseValue }); // Store for CSV
-            }
-        });
-    
-        // Check if there are any responses to submit
+    document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
+        const responses = gatherSurveyResponses();
+        
         if (responses.length === 0) {
             alert('No responses to submit.');
             return;
         }
-    
-        // Convert responses to CSV format
+
         const csvData = convertResponsesToCSV(responses);
+        const id = getIdFromURL();
         const randomNum = Date.now(); // Using current timestamp as a unique identifier
-    
+
         const params = {
             Bucket: 'pandabucket1337',
-            Key: `responses/${randomNum}.csv`,
+            Key: `responses/${id}/response_${randomNum}.csv`,
             Body: new Blob([csvData], { type: 'text/csv' }),
             ContentType: 'text/csv'
         };
-    
-        // Attempt to upload the responses to S3
+
         try {
             await s3.putObject(params).promise();
             alert('Responses submitted successfully!');
@@ -452,6 +413,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert('There was an error submitting your responses.');
         }
     });
+
+    function getIdFromURL(){
+        const url = new URL(window.location.href);
+        const id = url.searchParams.get('id');
+        return id;
+    }
 
     function gatherSurveyResponses() {
         const responses = [];
