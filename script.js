@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         try {
             const data = await s3.getObject(params).promise();
-            surveyData = JSON.parse(data.Body.toString('utf-8'));
+            const surveyData = JSON.parse(data.Body.toString('utf-8'));
             // localStorage.setItem('surveyData', JSON.stringify(surveyData));
             displaySurvey(surveyData);
         } catch (error) {
@@ -388,31 +388,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Response Submission
-    function initResponseSubmission() {
-        document.getElementById('submitButton').addEventListener('click', async () => {
-            try {
-                const responses = gatherResponses();
-                
-                // Check if there are any responses to submit
-                if (responses.length === 0) {
-                    alert('No responses to submit.');
-                    return;
-                }
-    
-                // Convert responses to CSV format
-                const csvData = convertResponsesToCSV(responses);
-                const surveyId = getSurveyIdFromURL(); // Function to get the survey ID from the URL
-                const randomNum = Date.now(); // Using current timestamp as a unique identifier
-    
-                await uploadResponsesToS3(csvData, surveyId, randomNum);
-                alert('Responses submitted successfully!');
-            } catch (error) {
-                console.error('Error during submission:', error);
-                alert('There was an error submitting your responses: ' + error.message);
+    document.getElementById('submitButton').addEventListener('click', async () => {
+        try {
+            const responses = gatherResponses();
+            
+            // Check if there are any responses to submit
+            if (responses.length === 0) {
+                alert('No responses to submit.');
+                return;
             }
-        });
-    }
-    
+
+            // Convert responses to CSV format
+            const csvData = convertResponsesToCSV(responses);
+            const surveyId = getSurveyIdFromURL(); // Function to get the survey ID from the URL
+            const randomNum = Date.now(); // Using current timestamp as a unique identifier
+
+            await uploadResponsesToS3(csvData, surveyId, randomNum);
+            alert('Responses submitted successfully!');
+        } catch (error) {
+            console.error('Error during submission:', error);
+            alert('There was an error submitting your responses: ' + error.message);
+        }
+    });
+
     function gatherResponses() {
         const responses = [];
         surveyData.questions.forEach((question, index) => {
@@ -423,7 +421,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         return responses;
     }
-    
+
     function getResponseValue(question, index) {
         let responseValue = '';
         if (question.type === 'Multiple choice') {
@@ -451,7 +449,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
         await s3.putObject(params).promise();
     }
-    
+
     function getSurveyIdFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('id'); // Assuming the survey ID is passed as a query parameter
