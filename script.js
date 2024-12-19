@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         try {
             const data = await s3.getObject(params).promise();
-            surveyData = JSON.parse(data.Body.toString('utf-8'));
+            const surveyData = JSON.parse(data.Body.toString('utf-8'));
             // localStorage.setItem('surveyData', JSON.stringify(surveyData));
             displaySurvey(surveyData);
         } catch (error) {
@@ -455,22 +455,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return urlParams.get('id'); // Assuming the survey ID is passed as a query parameter
     }
 
-    function gatherSurveyResponses() {
-        const responses = [];
-        const surveyData = JSON.parse(localStorage.getItem('surveyData')); // Assuming survey data is stored in local storage
-
-        surveyData.questions.forEach((question, index) => {
-            const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
-                           document.querySelector(`input[name="question${index}"]`) || 
-                           document.querySelector(`select[name="question${index}"]`);
-            responses.push({
-                question: question.question,
-                answer: answer ? answer.value : 'No answer provided'
-            });
-        });
-
-        return responses;
-    }
 
     function convertResponsesToCSV(responses) {
         return responses.map(r => `${r.question},"${r.answer}"`).join('\n');
