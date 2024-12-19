@@ -386,7 +386,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Response Submission
-    document.getElementById('submitSurveyBtn').addEventListener('click', async () => {
+    document.getElementById('submitButton').addEventListener('click', async () => {
         const responses = gatherSurveyResponses();
         
         if (responses.length === 0) {
