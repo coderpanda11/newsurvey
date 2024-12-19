@@ -387,32 +387,48 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Response Submission
     document.getElementById('submitButton').addEventListener('click', async () => {
-        const responses = gatherSurveyResponses();
-        
+        const id = getIdFromURL(); // Get the survey ID from the URL
+        const responses = await gatherSurveyResponses(id); // Pass the ID to gather responses
+    
         if (responses.length === 0) {
             alert('No responses to submit.');
             return;
         }
-
+    
         const csvData = convertResponsesToCSV(responses);
-        const id = getIdFromURL();
         const randomNum = Date.now(); // Using current timestamp as a unique identifier
-
+    
         const params = {
             Bucket: 'pandabucket1337',
-            Key: `responses/${id}/response_${randomNum}.csv`,
+            Key: `responses/${id}/${randomNum}.csv`,
             Body: new Blob([csvData], { type: 'text/csv' }),
             ContentType: 'text/csv'
         };
-
+    
         try {
             await s3.putObject(params).promise();
             alert('Responses submitted successfully!');
         } catch (error) {
             console.error('Error uploading responses:', error);
-            alert('There was an error submitting your responses.');
+            alert("Error submitting responses");
         }
     });
+
+    async function fetchSurveyData(surveyId) {
+        const params = {
+            Bucket: 'your-bucket-name', // Replace with your bucket name
+            Key: `surveys/${surveyId}.json` // Adjust the key based on your S3 structure
+        };
+    
+        try {
+            const data = await s3.getObject(params).promise();
+            return JSON.parse(data.Body.toString('utf-8')); // Convert the data to JSON
+        } catch (error) {
+            console.error('Error fetching survey data:', error);
+            throw error; // Rethrow the error for handling in the calling function
+        }
+    }
+
 
     function getIdFromURL(){
         const url = new URL(window.location.href);
@@ -420,14 +436,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         return id;
     }
 
-    function gatherSurveyResponses() {
+    async function gatherSurveyResponses(surveyId) {
         const responses = [];
-        const surveyData = JSON.parse(localStorage.getItem('surveyData')); // Assuming survey data is stored in local storage
+        let surveyData;
+
+        try {
+            surveyData = await fetchSurveyData(surveyId); // Fetch survey data from S3
+        } catch (error) {
+            alert('Failed to load survey data.');
+            return responses; // Return empty responses if fetching fails
+        }
 
         surveyData.questions.forEach((question, index) => {
             const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
-                           document.querySelector(`input[name="question${index}"]`) || 
-                           document.querySelector(`select[name="question${index}"]`);
+                        document.querySelector(`input[name="question${index}"]`) || 
+                        document.querySelector(`select[name="question${index}"]`);
             responses.push({
                 question: question.question,
                 answer: answer ? answer.value : 'No answer provided'
