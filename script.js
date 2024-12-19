@@ -422,7 +422,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function gatherSurveyResponses() {
         const responses = [];
-        // const surveyData = JSON.parse(localStorage.getItem('surveyData')); // Assuming survey data is stored in local storage
+        const surveyData = JSON.parse(localStorage.getItem('surveyData')); // Assuming survey data is stored in local storage
 
         surveyData.questions.forEach((question, index) => {
             const answer = document.querySelector(`input[name="question${index}"]:checked`) || 
