@@ -10,8 +10,8 @@
 
 /* Global Styles */
 body {
-    background-color: #ffffff; /* Updated background color */
-    color: #100101; /* Updated text color */
+    background-color: #1a1a2e; /* Updated background color */
+    color: #ffffff; /* Updated text color */
     line-height: 1.6;
 }
 
@@ -115,7 +115,7 @@ footer {
     text-align: center;
     margin: 0;
     padding: 10px 0;
-    background-color: #060606; /* Updated footer background */
+    background-color: #1a1a2e; /* Updated footer background */
     color: #f4efef; /* Updated footer text color */
     box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
 }
@@ -134,15 +134,17 @@ form {
     max-width: 600px;
     margin: 20px auto;
     padding: 20px;
-    background: #fff;
+    background: #1a1a2e;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 label {
+    color: #ffffff;
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
+    font-size: 20px;
 }
 
 input[type="text"],
@@ -189,11 +191,12 @@ table {
     border-collapse: collapse;
     text-align: center; /* Center align all text */
     table-layout: fixed; /* Fix table layout for better alignment */
+    background-color: #1a1a2e;
 }
 
 thead {
-    background-color: #5cb85c;
-    color: white;
+    background-color: #0f3460;
+    color: #ffffff;
 }
 
 thead th {
@@ -207,14 +210,15 @@ tbody td, thead th {
     padding: 12px; /* Uniform padding */
     border: 1px solid #ddd;
     vertical-align: middle; /* Align content vertically */
+    color: #ffffff;
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #f9f9f9;
+    background-color: #1a1a2e;
 }
 
 tbody tr:nth-child(even) {
-    background-color: #fff;
+    background-color: #0f3460;
 }
 
 tbody td:first-child {
